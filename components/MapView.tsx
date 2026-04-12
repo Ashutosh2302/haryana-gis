@@ -12,7 +12,6 @@ import html2canvas from "html2canvas";
 import { toBlob as domToBlob } from "html-to-image";
 import { jsPDF } from "jspdf";
 import L from "leaflet";
-import "leaflet-draw";
 import { ChevronDown, ChevronUp, Layers3 } from "lucide-react";
 import {
   GeoJSON,
@@ -86,71 +85,6 @@ const pillarMarkerStyles: Record<PillarStatus, string> = {
   Pending: "marker-pending",
   Disputed: "marker-disputed",
 };
-
-function MeasurementControls() {
-  const map = useMap();
-
-  useEffect(() => {
-    const drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
-
-    const drawControl = new L.Control.Draw({
-      position: "topleft",
-      draw: {
-        polyline: {
-          metric: true,
-          shapeOptions: {
-            color: "#2563eb",
-            weight: 4,
-          },
-        },
-        polygon: {
-          allowIntersection: false,
-          showArea: true,
-          shapeOptions: {
-            color: "#15803d",
-            weight: 3,
-            fillColor: "#16a34a",
-            fillOpacity: 0.12,
-          },
-        },
-        rectangle: {
-          showArea: true,
-          shapeOptions: {
-            color: "#0f766e",
-            weight: 3,
-            fillColor: "#14b8a6",
-            fillOpacity: 0.1,
-          },
-        },
-        circle: false,
-        marker: false,
-        circlemarker: false,
-      },
-      edit: {
-        featureGroup: drawnItems,
-        edit: false,
-        remove: true,
-      },
-    });
-
-    const handleCreated = (event: L.LeafletEvent) => {
-      const drawEvent = event as L.DrawEvents.Created;
-      drawnItems.addLayer(drawEvent.layer);
-    };
-
-    map.addControl(drawControl);
-    map.on(L.Draw.Event.CREATED, handleCreated);
-
-    return () => {
-      map.off(L.Draw.Event.CREATED, handleCreated);
-      map.removeControl(drawControl);
-      map.removeLayer(drawnItems);
-    };
-  }, [map]);
-
-  return null;
-}
 
 function createForestSelection(
   forest: ForestProperties,
@@ -952,7 +886,6 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
           />
 
           <ScaleControl position="bottomleft" imperial={false} />
-          <MeasurementControls />
           <FocusController
             forestPillars={pillarsCollection.features}
             villagePillars={villagePillarsCollection.features}

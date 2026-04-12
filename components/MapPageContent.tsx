@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toBlob as domToBlob } from "html-to-image";
 import { jsPDF } from "jspdf";
-import { Camera } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 
 import CaptureModal from "@/components/CaptureModal";
@@ -145,7 +145,9 @@ function buildPdf(
 
   row(
     "Basemap",
-    basemap === "street" ? "Street Map (OpenStreetMap)" : "Satellite (Esri World Imagery)",
+    basemap === "street"
+      ? "Street Map (OpenStreetMap)"
+      : "Satellite (Esri World Imagery)",
   );
 
   const activeLayerNames = (Object.keys(layers) as SurveyLayerId[]).filter(
@@ -197,7 +199,10 @@ function buildPdf(
     pdf.text(coords, margin, y);
     y += 6;
 
-    const detailRows = [...panelData.focusRows, ...panelData.infoRows].slice(0, 8);
+    const detailRows = [...panelData.focusRows, ...panelData.infoRows].slice(
+      0,
+      8,
+    );
     for (const r of detailRows) {
       if (y > pageH - margin - 8) break;
       row(r.label, r.value, 8);
@@ -237,7 +242,9 @@ export default function MapPageContent() {
   const [capturing, setCapturing] = useState(false);
   const [expandLegendForCapture, setExpandLegendForCapture] = useState(false);
   const [showCaptureModal, setShowCaptureModal] = useState(false);
-  const [currentSelection, setCurrentSelection] = useState<MapSelection | null>(null);
+  const [currentSelection, setCurrentSelection] = useState<MapSelection | null>(
+    null,
+  );
   const selectionRef = useRef<MapSelection | null>(null);
 
   useEffect(() => {
@@ -456,7 +463,7 @@ export default function MapPageContent() {
         <div className="relative h-[calc(100vh-1.5rem)] overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)] xl:h-[calc(100vh-2rem)]">
           <div
             data-capture-ignore=""
-            className="pointer-events-none absolute left-20 right-3 top-3 z-[900] flex items-start justify-between gap-2 md:left-24 md:top-4"
+            className="pointer-events-none absolute left-20 right-3 top-3 z-[900] flex items-start justify-start gap-2 md:left-24 md:top-4"
           >
             <Topbar
               query={query}
@@ -464,18 +471,6 @@ export default function MapPageContent() {
               onQueryChange={setQuery}
               onSearch={handleSearch}
             />
-            <button
-              type="button"
-              onClick={() => setShowCaptureModal(true)}
-              disabled={capturing}
-              className="pointer-events-auto inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-white/70 bg-white/92 px-3.5 text-sm font-semibold text-slate-700 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.42)] backdrop-blur transition hover:bg-white hover:text-slate-950 disabled:opacity-60"
-              aria-label="Capture current map view"
-            >
-              <Camera className={`h-4 w-4 ${capturing ? "animate-pulse" : ""}`} />
-              <span className="hidden sm:inline">
-                {capturing ? "Exporting…" : "Capture"}
-              </span>
-            </button>
           </div>
 
           <MapView
@@ -486,6 +481,27 @@ export default function MapPageContent() {
             onSelectionChange={handleSelectionChange}
             legendForceExpanded={expandLegendForCapture}
           />
+
+          {/* After MapView; sits in Leaflet top-left column under zoom (draw tools removed). */}
+          <button
+            type="button"
+            data-capture-ignore=""
+            onClick={() => setShowCaptureModal(true)}
+            disabled={capturing}
+            className="pointer-events-auto absolute left-[7px] top-[78px] z-[5000] flex h-9 w-9 items-center justify-center rounded-full border border-slate-300/90 bg-white text-slate-800 shadow-sm ring-1 ring-slate-900/5 transition hover:border-slate-400 hover:bg-slate-50 hover:text-slate-950 disabled:pointer-events-none"
+            aria-label={
+              capturing ? "Exporting map view" : "Export map view as PDF"
+            }
+          >
+            {capturing ? (
+              <Loader2
+                className="h-[18px] w-[18px] shrink-0 animate-spin"
+                aria-hidden
+              />
+            ) : (
+              <Camera className="h-[18px] w-[18px] shrink-0" aria-hidden />
+            )}
+          </button>
         </div>
       </section>
 
