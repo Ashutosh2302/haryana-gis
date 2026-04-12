@@ -856,11 +856,18 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
                   }
 
                   if (forest && polygonCoordinates) {
-                    layer.on("click", () => {
+                    const handleForestSelect = (
+                      event?: L.LeafletMouseEvent,
+                    ) => {
+                      if (event) {
+                        L.DomEvent.stop(event);
+                      }
                       setSelection(
                         createForestSelection(forest, polygonCoordinates),
                       );
-                    });
+                    };
+
+                    layer.on("preclick", handleForestSelect);
                   }
                 }}
               />
@@ -907,11 +914,18 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
                   }
 
                   if (village && polygonCoordinates) {
-                    layer.on("click", () => {
+                    const handleVillageSelect = (
+                      event?: L.LeafletMouseEvent,
+                    ) => {
+                      if (event) {
+                        L.DomEvent.stop(event);
+                      }
                       setSelection(
                         createVillageSelection(village, polygonCoordinates),
                       );
-                    });
+                    };
+
+                    layer.on("preclick", handleVillageSelect);
                   }
                 }}
               />

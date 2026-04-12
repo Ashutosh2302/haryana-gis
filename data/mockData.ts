@@ -2,164 +2,115 @@ import type { FeatureCollection } from "geojson";
 
 import type {
   PillarFeatureCollection,
+  PillarStatus,
   VillageFeatureCollection,
   VillagePillarFeatureCollection,
 } from "@/types/gis";
 
+// Mostly corner turns with a few infill vertices so the mock outline reads
+// more like a surveyed forest boundary than a smoothed traced shape.
+const morniForestBoundary: [number, number][] = [
+  [76.818, 30.822],
+  [76.824, 30.835],
+  [76.829, 30.848],
+  [76.838, 30.857],
+  [76.851, 30.862],
+  [76.864, 30.866],
+  [76.878, 30.864],
+  [76.891, 30.867],
+  [76.904, 30.865],
+  [76.916, 30.86],
+  [76.928, 30.854],
+  [76.941, 30.849],
+  [76.952, 30.843],
+  [76.964, 30.836],
+  [76.975, 30.829],
+  [76.982, 30.817],
+  [76.981, 30.805],
+  [76.979, 30.794],
+  [76.978, 30.782],
+  [76.976, 30.771],
+  [76.973, 30.758],
+  [76.971, 30.747],
+  [76.968, 30.735],
+  [76.958, 30.728],
+  [76.946, 30.724],
+  [76.934, 30.722],
+  [76.922, 30.721],
+  [76.909, 30.719],
+  [76.897, 30.717],
+  [76.884, 30.714],
+  [76.872, 30.712],
+  [76.86, 30.716],
+  [76.849, 30.724],
+  [76.839, 30.732],
+  [76.829, 30.741],
+  [76.82, 30.751],
+  [76.811, 30.761],
+  [76.812, 30.774],
+  [76.814, 30.787],
+  [76.816, 30.8],
+];
+
+const kaimbwalaVillageBoundary: [number, number][] = [
+  [76.841, 30.762],
+  [76.848, 30.771],
+  [76.856, 30.776],
+  [76.864, 30.771],
+  [76.868, 30.758],
+  [76.864, 30.746],
+  [76.853, 30.741],
+  [76.844, 30.747],
+];
+
+const mandhnaVillageBoundary: [number, number][] = [
+  [76.892, 30.789],
+  [76.9, 30.797],
+  [76.909, 30.801],
+  [76.919, 30.797],
+  [76.927, 30.787],
+  [76.925, 30.776],
+  [76.917, 30.765],
+  [76.906, 30.759],
+  [76.896, 30.767],
+];
+
+function getMorniSurveyDate(index: number) {
+  const dayNumber = index + 10;
+  const month = dayNumber <= 28 ? "02" : "03";
+  const day = dayNumber <= 28 ? dayNumber : dayNumber - 28;
+
+  return `2026-${month}-${String(day).padStart(2, "0")}`;
+}
+
+function getVillageSurveyDate(index: number) {
+  return `2026-03-${String(index + 3).padStart(2, "0")}`;
+}
+
 export const pillarsCollection: PillarFeatureCollection = {
   type: "FeatureCollection",
   features: [
-    {
-      type: "Feature",
+    ...morniForestBoundary.map((coordinates, index) => ({
+      type: "Feature" as const,
       properties: {
-        id: "HR-PILLAR-001",
+        id: `HR-PILLAR-${String(index + 1).padStart(3, "0")}`,
         village: "Morni",
         district: "Panchkula",
-        survey_date: "2026-02-10",
-        survey_no: "MOR/2026/001",
-        status: "Verified",
+        survey_date: getMorniSurveyDate(index),
+        survey_no: `MOR/2026/${String(index + 1).padStart(3, "0")}`,
+        status: "Verified" as PillarStatus,
         image_url: "/pillar-placeholder.svg",
       },
-      geometry: { type: "Point", coordinates: [76.818, 30.822] },
-    },
+      geometry: { type: "Point" as const, coordinates },
+    })),
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-002",
-        village: "Pinjore",
-        district: "Panchkula",
-        survey_date: "2026-02-11",
-        survey_no: "PIN/2026/002",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.904, 30.867] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-003",
-        village: "Kalka",
-        district: "Panchkula",
-        survey_date: "2026-02-12",
-        survey_no: "KAL/2026/003",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.982, 30.824] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-004",
-        village: "Morni",
-        district: "Panchkula",
-        survey_date: "2026-02-14",
-        survey_no: "MOR/2026/004",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.968, 30.731] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-005",
-        village: "Morni",
-        district: "Panchkula",
-        survey_date: "2026-02-15",
-        survey_no: "MOR/2026/005",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.868, 30.711] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-006",
-        village: "Morni",
-        district: "Panchkula",
-        survey_date: "2026-02-16",
-        survey_no: "MOR/2026/006",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.81, 30.761] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-007",
-        village: "Pinjore",
-        district: "Panchkula",
-        survey_date: "2026-02-18",
-        survey_no: "PIN/2026/007",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.861, 30.833] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-008",
-        village: "Kalka",
-        district: "Panchkula",
-        survey_date: "2026-02-19",
-        survey_no: "KAL/2026/008",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [77.007, 30.835] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-009",
-        village: "Kalka",
-        district: "Panchkula",
-        survey_date: "2026-02-21",
-        survey_no: "KAL/2026/009",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [77.035, 30.748] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-010",
-        village: "Morni",
-        district: "Panchkula",
-        survey_date: "2026-02-22",
-        survey_no: "MOR/2026/010",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.938, 30.688] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-011",
-        village: "Morni",
-        district: "Panchkula",
-        survey_date: "2026-02-24",
-        survey_no: "MOR/2026/011",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-      },
-      geometry: { type: "Point", coordinates: [76.838, 30.734] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-012",
+        id: "HR-PILLAR-041",
         village: "Sadhaura",
         district: "Yamunanagar",
-        survey_date: "2026-02-25",
-        survey_no: "SAD/2026/012",
+        survey_date: "2026-03-22",
+        survey_no: "SAD/2026/041",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -168,11 +119,11 @@ export const pillarsCollection: PillarFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-013",
+        id: "HR-PILLAR-042",
         village: "Jagadhri",
         district: "Yamunanagar",
-        survey_date: "2026-02-26",
-        survey_no: "JAG/2026/013",
+        survey_date: "2026-03-23",
+        survey_no: "JAG/2026/042",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -181,11 +132,11 @@ export const pillarsCollection: PillarFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-014",
+        id: "HR-PILLAR-043",
         village: "Bilaspur",
         district: "Yamunanagar",
-        survey_date: "2026-02-27",
-        survey_no: "BIL/2026/014",
+        survey_date: "2026-03-24",
+        survey_no: "BIL/2026/043",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -194,11 +145,11 @@ export const pillarsCollection: PillarFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-015",
+        id: "HR-PILLAR-044",
         village: "Bilaspur",
         district: "Yamunanagar",
-        survey_date: "2026-02-28",
-        survey_no: "BIL/2026/015",
+        survey_date: "2026-03-25",
+        survey_no: "BIL/2026/044",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -207,11 +158,11 @@ export const pillarsCollection: PillarFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-016",
+        id: "HR-PILLAR-045",
         village: "Jagadhri",
         district: "Yamunanagar",
-        survey_date: "2026-03-01",
-        survey_no: "JAG/2026/016",
+        survey_date: "2026-03-26",
+        survey_no: "JAG/2026/045",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -220,11 +171,11 @@ export const pillarsCollection: PillarFeatureCollection = {
     {
       type: "Feature",
       properties: {
-        id: "HR-PILLAR-017",
+        id: "HR-PILLAR-046",
         village: "Sadhaura",
         district: "Yamunanagar",
-        survey_date: "2026-03-02",
-        survey_no: "SAD/2026/017",
+        survey_date: "2026-03-27",
+        survey_no: "SAD/2026/046",
         status: "Verified",
         image_url: "/pillar-placeholder.svg",
       },
@@ -247,38 +198,33 @@ export const forestCollection: FeatureCollection = {
         type: "Polygon",
         coordinates: [
           [
-            [76.818, 30.822],
-            [76.904, 30.867],
-            [76.982, 30.824],
-            [76.968, 30.731],
-            [76.868, 30.711],
-            [76.81, 30.761],
-            [76.818, 30.822],
+            ...morniForestBoundary,
+            morniForestBoundary[0],
           ],
         ],
       },
     },
-    {
-      type: "Feature",
-      properties: {
-        name: "Panchkula Forest Division",
-        division: "Panchkula Forest Division",
-        area_ha: 3860,
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [76.861, 30.833],
-            [77.007, 30.835],
-            [77.035, 30.748],
-            [76.938, 30.688],
-            [76.838, 30.734],
-            [76.861, 30.833],
-          ],
-        ],
-      },
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     name: "Panchkula Forest Division",
+    //     division: "Panchkula Forest Division",
+    //     area_ha: 3860,
+    //   },
+    //   geometry: {
+    //     type: "Polygon",
+    //     coordinates: [
+    //       [
+    //         [76.861, 30.833],
+    //         [77.007, 30.835],
+    //         [77.035, 30.748],
+    //         [76.938, 30.688],
+    //         [76.838, 30.734],
+    //         [76.861, 30.833],
+    //       ],
+    //     ],
+    //   },
+    // },
     {
       type: "Feature",
       properties: {
@@ -311,8 +257,8 @@ export const villagesCollection: VillageFeatureCollection = {
       type: "Feature",
       properties: {
         id: "HR-VLG-001",
-        name: "Kaimbwala Village Lands",
-        tehsil: "Kalka",
+        name: "Morni Village Lands",
+        tehsil: "Morni",
         district: "Panchkula",
         area_ha: 118,
         settlement_stage: "Boundary verification under review",
@@ -321,11 +267,8 @@ export const villagesCollection: VillageFeatureCollection = {
         type: "Polygon",
         coordinates: [
           [
-            [76.843, 30.766],
-            [76.868, 30.782],
-            [76.862, 30.744],
-            [76.838, 30.739],
-            [76.843, 30.766],
+            ...kaimbwalaVillageBoundary,
+            kaimbwalaVillageBoundary[0],
           ],
         ],
       },
@@ -334,7 +277,7 @@ export const villagesCollection: VillageFeatureCollection = {
       type: "Feature",
       properties: {
         id: "HR-VLG-002",
-        name: "Mandhna Revenue Village",
+        name: "Bhoj Koti Village Lands",
         tehsil: "Morni",
         district: "Panchkula",
         area_ha: 96,
@@ -344,34 +287,8 @@ export const villagesCollection: VillageFeatureCollection = {
         type: "Polygon",
         coordinates: [
           [
-            [76.918, 30.724],
-            [76.946, 30.737],
-            [76.94, 30.708],
-            [76.914, 30.702],
-            [76.918, 30.724],
-          ],
-        ],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VLG-003",
-        name: "Bhoj Koti Village Lands",
-        tehsil: "Kalka",
-        district: "Panchkula",
-        area_ha: 84,
-        settlement_stage: "Village enclave demarcation completed",
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [76.965, 30.799],
-            [76.988, 30.804],
-            [76.984, 30.779],
-            [76.962, 30.775],
-            [76.965, 30.799],
+            ...mandhnaVillageBoundary,
+            mandhnaVillageBoundary[0],
           ],
         ],
       },
@@ -382,174 +299,34 @@ export const villagesCollection: VillageFeatureCollection = {
 export const villagePillarsCollection: VillagePillarFeatureCollection = {
   type: "FeatureCollection",
   features: [
-    {
-      type: "Feature",
+    ...kaimbwalaVillageBoundary.map((coordinates, index) => ({
+      type: "Feature" as const,
       properties: {
-        id: "HR-VP-001",
-        village: "Kaimbwala",
+        id: `HR-VP-${String(index + 1).padStart(3, "0")}`,
+        village: "Morni",
         district: "Panchkula",
-        survey_date: "2026-03-03",
-        survey_no: "KAI/2026/001",
-        status: "Verified",
+        survey_date: getVillageSurveyDate(Math.floor(index / 2)),
+        survey_no: `MOR-VLG/2026/${String(index + 1).padStart(3, "0")}`,
+        status: "Verified" as PillarStatus,
         image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
+        boundary_type: "Village Boundary Pillar" as const,
       },
-      geometry: { type: "Point", coordinates: [76.843, 30.766] },
-    },
-    {
-      type: "Feature",
+      geometry: { type: "Point" as const, coordinates },
+    })),
+    ...mandhnaVillageBoundary.map((coordinates, index) => ({
+      type: "Feature" as const,
       properties: {
-        id: "HR-VP-002",
-        village: "Kaimbwala",
-        district: "Panchkula",
-        survey_date: "2026-03-03",
-        survey_no: "KAI/2026/002",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.868, 30.782] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-003",
-        village: "Kaimbwala",
-        district: "Panchkula",
-        survey_date: "2026-03-04",
-        survey_no: "KAI/2026/003",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.862, 30.744] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-004",
-        village: "Kaimbwala",
-        district: "Panchkula",
-        survey_date: "2026-03-04",
-        survey_no: "KAI/2026/004",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.838, 30.739] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-005",
-        village: "Mandhna",
-        district: "Panchkula",
-        survey_date: "2026-03-05",
-        survey_no: "MAN/2026/005",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.918, 30.724] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-006",
-        village: "Mandhna",
-        district: "Panchkula",
-        survey_date: "2026-03-05",
-        survey_no: "MAN/2026/006",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.946, 30.737] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-007",
-        village: "Mandhna",
-        district: "Panchkula",
-        survey_date: "2026-03-06",
-        survey_no: "MAN/2026/007",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.94, 30.708] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-008",
-        village: "Mandhna",
-        district: "Panchkula",
-        survey_date: "2026-03-06",
-        survey_no: "MAN/2026/008",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.914, 30.702] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-009",
+        id: `HR-VP-${String(index + kaimbwalaVillageBoundary.length + 1).padStart(3, "0")}`,
         village: "Bhoj Koti",
         district: "Panchkula",
-        survey_date: "2026-03-07",
-        survey_no: "BHK/2026/009",
-        status: "Verified",
+        survey_date: getVillageSurveyDate(2 + Math.floor(index / 2)),
+        survey_no: `BHK/2026/${String(index + 1).padStart(3, "0")}`,
+        status: "Verified" as PillarStatus,
         image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
+        boundary_type: "Village Boundary Pillar" as const,
       },
-      geometry: { type: "Point", coordinates: [76.965, 30.799] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-010",
-        village: "Bhoj Koti",
-        district: "Panchkula",
-        survey_date: "2026-03-07",
-        survey_no: "BHK/2026/010",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.988, 30.804] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-011",
-        village: "Bhoj Koti",
-        district: "Panchkula",
-        survey_date: "2026-03-08",
-        survey_no: "BHK/2026/011",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.984, 30.779] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-VP-012",
-        village: "Bhoj Koti",
-        district: "Panchkula",
-        survey_date: "2026-03-08",
-        survey_no: "BHK/2026/012",
-        status: "Verified",
-        image_url: "/pillar-placeholder.svg",
-        boundary_type: "Village Boundary Pillar",
-      },
-      geometry: { type: "Point", coordinates: [76.962, 30.775] },
-    },
+      geometry: { type: "Point" as const, coordinates },
+    })),
   ],
 };
 

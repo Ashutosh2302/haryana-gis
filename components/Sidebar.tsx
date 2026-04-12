@@ -7,7 +7,6 @@ import {
   Layers3,
   Map,
   MapPinned,
-  Shield,
   Satellite,
   Trees,
 } from "lucide-react";
@@ -72,12 +71,6 @@ const surveyLayers: {
     label: "Village Boundary Pillars",
     caption: "Parcel corner markers",
     icon: MapPinned,
-  },
-  {
-    id: "admin",
-    label: "Administrative Boundaries",
-    caption: "District reference",
-    icon: Shield,
   },
 ];
 

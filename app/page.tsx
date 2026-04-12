@@ -34,7 +34,7 @@ const defaultLayers: LayerVisibility = {
   villages: true,
   pillars: true,
   villagePillars: true,
-  admin: true,
+  admin: false,
 };
 
 export default function Home() {
