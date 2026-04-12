@@ -102,12 +102,11 @@ input {
 }
 
 .pillar-marker-selected {
-  transform: scale(1.18);
-  box-shadow:
-    0 14px 28px -12px rgba(15, 23, 42, 0.6),
-    0 0 0 6px rgba(255, 255, 255, 0.96),
-    0 0 0 10px rgba(16, 185, 129, 0.28);
-  animation: selected-pillar-pulse 1.2s ease-in-out infinite;
+  transform: none !important;
+  background: #7c4a1d !important;
+  border-color: #4a2c12 !important;
+  box-shadow: 0 10px 22px -12px rgba(15, 23, 42, 0.45) !important;
+  animation: none !important;
 }
 
 .village-pillar-marker {
@@ -129,12 +128,11 @@ input {
 }
 
 .village-pillar-marker-selected {
-  transform: scale(1.18);
-  box-shadow:
-    0 12px 24px -12px rgba(15, 23, 42, 0.55),
-    0 0 0 6px rgba(255, 255, 255, 0.96),
-    0 0 0 10px rgba(249, 115, 22, 0.24);
-  animation: selected-village-pillar-pulse 1.2s ease-in-out infinite;
+  transform: none !important;
+  background: #8b5a2b !important;
+  border-color: #4a2c12 !important;
+  box-shadow: 0 8px 18px -12px rgba(15, 23, 42, 0.42) !important;
+  animation: none !important;
 }
 
 .village-pillar-complete {

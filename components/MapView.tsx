@@ -263,7 +263,8 @@ function MapLegend({
                   className="mt-1 truncate text-sm font-semibold"
                   style={{ color: "#020617" }}
                 >
-                  Basemap: {basemap === "street" ? "Street Map" : "Satellite Map"}
+                  Basemap:{" "}
+                  {basemap === "street" ? "Street Map" : "Satellite Map"}
                 </p>
               </>
             ) : (
@@ -272,12 +273,19 @@ function MapLegend({
           </div>
         </div>
         <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+          {expanded ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronUp className="h-4 w-4" />
+          )}
         </span>
       </button>
 
       {expanded ? (
-        <div className="mt-2 space-y-2.5 px-2 pb-1 text-sm" style={{ color: "#334155" }}>
+        <div
+          className="mt-2 space-y-2.5 px-2 pb-1 text-sm"
+          style={{ color: "#334155" }}
+        >
           {layers.forest && (
             <div className="flex items-center gap-3">
               <span
@@ -481,7 +489,10 @@ function FocusController({
         duration: 1,
       });
       onSelectionChange(
-        createVillagePillarSelection(target.properties, target.geometry.coordinates),
+        createVillagePillarSelection(
+          target.properties,
+          target.geometry.coordinates,
+        ),
       );
       onFocusHandled();
       return;
@@ -502,7 +513,10 @@ function FocusController({
       duration: 1,
     });
     onSelectionChange(
-      createForestPillarSelection(target.properties, target.geometry.coordinates),
+      createForestPillarSelection(
+        target.properties,
+        target.geometry.coordinates,
+      ),
     );
 
     onFocusHandled();
@@ -533,8 +547,8 @@ function createHighlightedPillarIcon(status: PillarStatus) {
   return L.divIcon({
     className: "custom-pillar-icon",
     html: `<span class="pillar-marker pillar-marker-selected ${pillarMarkerStyles[status]}"></span>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
     popupAnchor: [0, -8],
   });
 }
@@ -553,8 +567,8 @@ function createHighlightedVillagePillarIcon() {
   return L.divIcon({
     className: "custom-pillar-icon",
     html: '<span class="village-pillar-marker village-pillar-complete village-pillar-marker-selected"></span>',
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
     popupAnchor: [0, -8],
   });
 }
@@ -1032,7 +1046,10 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
                     eventHandlers={{
                       click: () => {
                         setSelection(
-                          createForestPillarSelection(pillar, feature.geometry.coordinates),
+                          createForestPillarSelection(
+                            pillar,
+                            feature.geometry.coordinates,
+                          ),
                         );
                       },
                     }}
