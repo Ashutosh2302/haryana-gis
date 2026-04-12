@@ -54,6 +54,7 @@ interface MapViewProps {
     nonce: number;
   } | null;
   onFocusHandled: () => void;
+  onSelectionChange?: (selection: MapSelection | null) => void;
 }
 
 export interface MapViewHandle {
@@ -672,13 +673,17 @@ function isVillagePillarSelected(
 }
 
 const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
-  { basemap, layers, focusRequest, onFocusHandled }: MapViewProps,
+  { basemap, layers, focusRequest, onFocusHandled, onSelectionChange }: MapViewProps,
   ref,
 ) {
   const villageLayerRefs = useRef<Record<string, L.Layer | null>>({});
   const captureRef = useRef<HTMLDivElement | null>(null);
   const activeBasemap = basemapConfig[basemap];
   const [selection, setSelection] = useState<MapSelection | null>(null);
+
+  useEffect(() => {
+    onSelectionChange?.(selection);
+  }, [selection, onSelectionChange]);
 
   useImperativeHandle(
     ref,

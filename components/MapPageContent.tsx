@@ -1,18 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toBlob as domToBlob } from "html-to-image";
+import { jsPDF } from "jspdf";
 import { Camera } from "lucide-react";
 import dynamic from "next/dynamic";
 
+import CaptureModal from "@/components/CaptureModal";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
+import { getAnalyticsPanelData } from "@/data/analyticsMock";
 import {
   pillarsCollection,
   villagePillarsCollection,
   villagesCollection,
 } from "@/data/mockData";
-import type { LayerVisibility } from "@/types/gis";
+import type { LayerVisibility, MapSelection, SurveyLayerId } from "@/types/gis";
 
 const MapView = dynamic(() => import("@/components/MapView"), {
   ssr: false,
@@ -39,6 +42,192 @@ const defaultLayers: LayerVisibility = {
   admin: true,
 };
 
+const layerLabels: Record<SurveyLayerId, string> = {
+  forest: "Forest Boundary",
+  pillars: "Pillar Points",
+  villages: "Village Lands",
+  villagePillars: "Village Boundary Pillars",
+  admin: "Administrative Boundary",
+};
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function buildPdf(
+  imageDataUrl: string,
+  imageAspect: number,
+  basemap: "street" | "satellite",
+  layers: LayerVisibility,
+  selection: MapSelection | null,
+  notes: string,
+  capturedAt: Date,
+) {
+  const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  const margin = 14;
+  const contentW = pageW - margin * 2;
+  const timestamp = capturedAt.toLocaleString("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  let y = margin;
+
+  // --- Header (minimal) ---
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(11);
+  pdf.setTextColor(15, 23, 42);
+  pdf.text("Haryana Forest Survey & Demarcation", margin, y + 4);
+  pdf.setFont("helvetica", "normal");
+  pdf.setFontSize(8);
+  pdf.setTextColor(100, 116, 139);
+  pdf.text("GIS map export", margin, y + 9);
+  pdf.setFontSize(7.5);
+  pdf.text(`Captured ${timestamp}`, pageW - margin, y + 6, { align: "right" });
+  y += 16;
+
+  pdf.setDrawColor(226, 232, 240);
+  pdf.setLineWidth(0.35);
+  pdf.line(margin, y, pageW - margin, y);
+  y += 8;
+
+  // --- Map hero: fixed frame, image scaled to fit (contain) + centered ---
+  const mapFrameH = 118;
+  const mapFrameX = margin;
+  const mapFrameY = y;
+  const mapFrameW = contentW;
+
+  pdf.setFillColor(241, 245, 249);
+  pdf.setDrawColor(226, 232, 240);
+  pdf.roundedRect(mapFrameX, mapFrameY, mapFrameW, mapFrameH, 2, 2, "FD");
+
+  let drawW = mapFrameW - 2;
+  let drawH = drawW / imageAspect;
+  if (drawH > mapFrameH - 2) {
+    drawH = mapFrameH - 2;
+    drawW = drawH * imageAspect;
+  }
+  const imgDrawX = mapFrameX + (mapFrameW - drawW) / 2;
+  const imgDrawY = mapFrameY + (mapFrameH - drawH) / 2;
+  pdf.addImage(imageDataUrl, "PNG", imgDrawX, imgDrawY, drawW, drawH);
+
+  y = mapFrameY + mapFrameH + 10;
+
+  // --- Export summary (full width, compact) ---
+  pdf.setFont("helvetica", "bold");
+  pdf.setFontSize(8);
+  pdf.setTextColor(71, 85, 105);
+  pdf.text("Export summary", margin, y);
+  y += 6;
+
+  const labelCol = margin;
+  const valueX = margin + 38;
+  const valueW = contentW - (valueX - margin);
+
+  const row = (label: string, value: string, valueFontSize = 8.5) => {
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text(label.toUpperCase(), labelCol, y);
+    pdf.setFontSize(valueFontSize);
+    pdf.setTextColor(30, 41, 59);
+    const lines = pdf.splitTextToSize(value, valueW);
+    pdf.text(lines, valueX, y);
+    y += Math.max(lines.length * 4.2, 5.5);
+  };
+
+  row(
+    "Basemap",
+    basemap === "street" ? "Street Map (OpenStreetMap)" : "Satellite (Esri World Imagery)",
+  );
+
+  const activeLayerNames = (Object.keys(layers) as SurveyLayerId[]).filter(
+    (id) => layers[id],
+  );
+  row(
+    "Active layers",
+    activeLayerNames.length
+      ? activeLayerNames.map((id) => layerLabels[id]).join(" · ")
+      : "None",
+    8,
+  );
+
+  if (selection) {
+    const panelData = getAnalyticsPanelData(selection);
+    y += 2;
+    pdf.setDrawColor(226, 232, 240);
+    pdf.line(margin, y, pageW - margin, y);
+    y += 5;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(8);
+    pdf.setTextColor(71, 85, 105);
+    pdf.text("Selected feature", margin, y);
+    y += 5;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7);
+    pdf.setTextColor(14, 165, 233);
+    pdf.text(panelData.entityLabel, margin, y);
+    y += 4.5;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(10);
+    pdf.setTextColor(15, 23, 42);
+    const titleLines = pdf.splitTextToSize(panelData.title, contentW);
+    pdf.text(titleLines, margin, y);
+    y += titleLines.length * 4.8 + 1;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8.5);
+    pdf.setTextColor(71, 85, 105);
+    pdf.text(panelData.subtitle, margin, y);
+    y += 5;
+
+    const coords = `${selection.coordinates.lat.toFixed(5)}, ${selection.coordinates.lng.toFixed(5)}`;
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(100, 116, 139);
+    pdf.text(coords, margin, y);
+    y += 6;
+
+    const detailRows = [...panelData.focusRows, ...panelData.infoRows].slice(0, 8);
+    for (const r of detailRows) {
+      if (y > pageH - margin - 8) break;
+      row(r.label, r.value, 8);
+    }
+  }
+
+  if (notes) {
+    y += 3;
+    pdf.setDrawColor(226, 232, 240);
+    pdf.line(margin, y, pageW - margin, y);
+    y += 6;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(8);
+    pdf.setTextColor(71, 85, 105);
+    pdf.text("Notes", margin, y);
+    y += 5;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8.5);
+    pdf.setTextColor(51, 65, 85);
+    const noteLines = pdf.splitTextToSize(notes, contentW);
+    const room = pageH - margin - y;
+    const maxLines = Math.max(1, Math.floor(room / 4.2));
+    pdf.text(noteLines.slice(0, maxLines), margin, y);
+  }
+
+  return pdf;
+}
+
 export default function MapPageContent() {
   const pageRef = useRef<HTMLElement>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -46,16 +235,38 @@ export default function MapPageContent() {
   const [layers, setLayers] = useState<LayerVisibility>(defaultLayers);
   const [query, setQuery] = useState("");
   const [capturing, setCapturing] = useState(false);
+  const [showCaptureModal, setShowCaptureModal] = useState(false);
+  const [currentSelection, setCurrentSelection] = useState<MapSelection | null>(null);
+  const selectionRef = useRef<MapSelection | null>(null);
+
+  useEffect(() => {
+    selectionRef.current = currentSelection;
+  }, [currentSelection]);
+
   const [searchMessage, setSearchMessage] = useState(
     "Ready for search. Try `HR-PILLAR-001`, `Kaimbwala`, or `HR-VP-001`.",
   );
+  const [focusRequest, setFocusRequest] = useState<{
+    type: "forestPillar" | "villagePillar" | "village";
+    targetId: string;
+    nonce: number;
+  } | null>(null);
 
-  const handleCapture = async () => {
-    if (!pageRef.current || capturing) return;
+  const handleSelectionChange = useCallback(
+    (selection: MapSelection | null) => {
+      setCurrentSelection(selection);
+    },
+    [],
+  );
+
+  const handleCaptureConfirm = async (notes: string) => {
+    setShowCaptureModal(false);
+    if (!pageRef.current) return;
+
     setCapturing(true);
     try {
       await new Promise((resolve) => {
-        window.setTimeout(resolve, 400);
+        window.setTimeout(resolve, 500);
       });
 
       const captureWidth = pageRef.current.scrollWidth;
@@ -82,16 +293,31 @@ export default function MapPageContent() {
       });
 
       if (!blob) {
-        window.alert("Failed to create screenshot.");
+        window.alert("Failed to capture the map view.");
         return;
       }
 
-      const objectUrl = URL.createObjectURL(blob);
-      const safeTimestamp = new Date()
+      const imageDataUrl = await blobToDataUrl(blob);
+      const imageAspect = captureWidth / captureHeight;
+      const capturedAt = new Date();
+
+      const pdf = buildPdf(
+        imageDataUrl,
+        imageAspect,
+        basemap,
+        layers,
+        selectionRef.current,
+        notes,
+        capturedAt,
+      );
+
+      const pdfBlob = pdf.output("blob");
+      const objectUrl = URL.createObjectURL(pdfBlob);
+      const safeTimestamp = capturedAt
         .toISOString()
         .slice(0, 19)
         .replace(/[T:]/g, "-");
-      const filename = `haryana-gis-screenshot-${safeTimestamp}.png`;
+      const filename = `haryana-gis-export-${safeTimestamp}.pdf`;
       const link = document.createElement("a");
       link.href = objectUrl;
       link.download = filename;
@@ -103,18 +329,13 @@ export default function MapPageContent() {
     } catch (error) {
       window.alert(
         error instanceof Error
-          ? `Screenshot failed: ${error.message}`
-          : "Screenshot capture failed unexpectedly.",
+          ? `PDF export failed: ${error.message}`
+          : "PDF export failed unexpectedly.",
       );
     } finally {
       setCapturing(false);
     }
   };
-  const [focusRequest, setFocusRequest] = useState<{
-    type: "forestPillar" | "villagePillar" | "village";
-    targetId: string;
-    nonce: number;
-  } | null>(null);
 
   const handleLayerToggle = (layer: keyof LayerVisibility) => {
     setLayers((current) => ({
@@ -242,14 +463,14 @@ export default function MapPageContent() {
             />
             <button
               type="button"
-              onClick={handleCapture}
+              onClick={() => setShowCaptureModal(true)}
               disabled={capturing}
               className="pointer-events-auto inline-flex h-11 shrink-0 items-center gap-2 rounded-2xl border border-white/70 bg-white/92 px-3.5 text-sm font-semibold text-slate-700 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.42)] backdrop-blur transition hover:bg-white hover:text-slate-950 disabled:opacity-60"
               aria-label="Capture current map view"
             >
               <Camera className={`h-4 w-4 ${capturing ? "animate-pulse" : ""}`} />
               <span className="hidden sm:inline">
-                {capturing ? "Capturing…" : "Capture"}
+                {capturing ? "Exporting…" : "Capture"}
               </span>
             </button>
           </div>
@@ -259,9 +480,16 @@ export default function MapPageContent() {
             layers={layers}
             focusRequest={focusRequest}
             onFocusHandled={() => setFocusRequest(null)}
+            onSelectionChange={handleSelectionChange}
           />
         </div>
       </section>
+
+      <CaptureModal
+        open={showCaptureModal}
+        onConfirm={handleCaptureConfirm}
+        onCancel={() => setShowCaptureModal(false)}
+      />
     </main>
   );
 }
