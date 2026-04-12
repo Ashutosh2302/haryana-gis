@@ -39,6 +39,7 @@ export interface ForestProperties {
   name: string;
   division: string;
   area_ha: number;
+  image_url: string;
 }
 
 export interface VillageProperties {
@@ -48,6 +49,7 @@ export interface VillageProperties {
   district: string;
   area_ha: number;
   settlement_stage: string;
+  image_url: string;
 }
 
 export interface VillageFeature {

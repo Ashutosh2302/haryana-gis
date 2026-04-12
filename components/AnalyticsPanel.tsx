@@ -34,7 +34,8 @@ function getImageSection(selection: MapSelection) {
       return {
         src: selection.pillar.image_url,
         title: "Pillar Image",
-        caption: "Field photo placeholder. Replace with actual survey imagery later.",
+        caption:
+          "Field photo placeholder. Replace with actual survey imagery later.",
       };
     case "villagePillar":
       return {
@@ -44,13 +45,13 @@ function getImageSection(selection: MapSelection) {
       };
     case "forest":
       return {
-        src: null,
+        src: selection.forest.image_url,
         title: "Forest Area Image",
         caption: "Reserved for forest parcel imagery or drone capture.",
       };
     case "village":
       return {
-        src: null,
+        src: selection.village.image_url,
         title: "Village Parcel Image",
         caption: "Reserved for parcel reference image or cadastral snapshot.",
       };
@@ -84,7 +85,9 @@ export default function AnalyticsPanel({
     <>
       <div
         className={`absolute inset-0 z-[820] bg-slate-950/22 backdrop-blur-[2px] transition-opacity duration-300 md:hidden ${
-          selection ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+          selection
+            ? "pointer-events-auto opacity-100"
+            : "pointer-events-none opacity-0"
         }`}
         onClick={onClose}
         aria-hidden={!selection}
@@ -118,7 +121,9 @@ export default function AnalyticsPanel({
                       </p>
                       <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
                         <MapPinned className="h-3.5 w-3.5 text-slate-500" />
-                        <span>Coordinates: {formatCoordinates(selectedFeature!)}</span>
+                        <span>
+                          Coordinates: {formatCoordinates(selectedFeature!)}
+                        </span>
                       </div>
                     </div>
                     <button
@@ -194,9 +199,9 @@ export default function AnalyticsPanel({
                       </div>
                     )}
                   </div>
-                  <p className="mt-2 text-xs leading-5 text-slate-500">
+                  {/* <p className="mt-2 text-xs leading-5 text-slate-500">
                     {imageSection?.caption}
-                  </p>
+                  </p> */}
                 </section>
 
                 <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -233,19 +238,21 @@ export default function AnalyticsPanel({
                     Selected Details
                   </p>
                   <div className="mt-3 grid grid-cols-1 gap-2">
-                    {[...panelData.focusRows, ...panelData.infoRows].slice(0, 4).map((row) => (
-                      <div
-                        key={row.label}
-                        className="rounded-2xl border border-slate-200/80 bg-slate-50/80 px-3 py-2.5"
-                      >
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                          {row.label}
-                        </p>
-                        <p className="mt-1.5 text-sm font-semibold leading-6 text-slate-900">
-                          {row.value}
-                        </p>
-                      </div>
-                    ))}
+                    {[...panelData.focusRows, ...panelData.infoRows]
+                      .slice(0, 4)
+                      .map((row) => (
+                        <div
+                          key={row.label}
+                          className="rounded-2xl border border-slate-200/80 bg-slate-50/80 px-3 py-2.5"
+                        >
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+                            {row.label}
+                          </p>
+                          <p className="mt-1.5 text-sm font-semibold leading-6 text-slate-900">
+                            {row.value}
+                          </p>
+                        </div>
+                      ))}
                   </div>
                 </section>
               </div>

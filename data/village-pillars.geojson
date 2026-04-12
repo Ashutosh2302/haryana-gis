@@ -10,7 +10,7 @@
         "survey_date": "2026-03-03",
         "survey_no": "KAI/2026/001",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.843, 30.766] }
@@ -24,7 +24,7 @@
         "survey_date": "2026-03-03",
         "survey_no": "KAI/2026/002",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.868, 30.782] }
@@ -38,7 +38,7 @@
         "survey_date": "2026-03-04",
         "survey_no": "KAI/2026/003",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.862, 30.744] }
@@ -52,7 +52,7 @@
         "survey_date": "2026-03-04",
         "survey_no": "KAI/2026/004",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.838, 30.739] }
@@ -66,7 +66,7 @@
         "survey_date": "2026-03-05",
         "survey_no": "MAN/2026/005",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.918, 30.724] }
@@ -80,7 +80,7 @@
         "survey_date": "2026-03-05",
         "survey_no": "MAN/2026/006",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.946, 30.737] }
@@ -94,7 +94,7 @@
         "survey_date": "2026-03-06",
         "survey_no": "MAN/2026/007",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.94, 30.708] }
@@ -108,7 +108,7 @@
         "survey_date": "2026-03-06",
         "survey_no": "MAN/2026/008",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.914, 30.702] }
@@ -122,7 +122,7 @@
         "survey_date": "2026-03-07",
         "survey_no": "BHK/2026/009",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.965, 30.799] }
@@ -136,7 +136,7 @@
         "survey_date": "2026-03-07",
         "survey_no": "BHK/2026/010",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.988, 30.804] }
@@ -150,7 +150,7 @@
         "survey_date": "2026-03-08",
         "survey_no": "BHK/2026/011",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.984, 30.779] }
@@ -164,7 +164,7 @@
         "survey_date": "2026-03-08",
         "survey_no": "BHK/2026/012",
         "status": "Verified",
-        "image_url": "/pillar-placeholder.svg",
+        "image_url": "/village.jpeg",
         "boundary_type": "Village Boundary Pillar"
       },
       "geometry": { "type": "Point", "coordinates": [76.962, 30.775] }
