@@ -109,9 +109,10 @@ export default function Sidebar({
 }: SidebarProps) {
   return (
     <aside
-      className={`flex h-screen flex-col border-r border-slate-800 bg-slate-950 px-3 py-4 text-slate-100 transition-all duration-300 ${
+      className={`sticky top-0 flex h-screen max-h-screen flex-col border-r border-slate-800 bg-slate-950 px-3 py-4 text-slate-100 transition-all duration-300 ${
         collapsed ? "w-[92px]" : "w-[320px]"
       }`}
+      style={{ height: "100vh", maxHeight: "100vh" }}
     >
       <div className="mb-6 flex items-center justify-between gap-3 px-2">
         <div className={`min-w-0 ${collapsed ? "hidden" : "block"}`}>

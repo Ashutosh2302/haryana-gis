@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import html2canvas from "html2canvas";
+import { toBlob as domToBlob } from "html-to-image";
 import { jsPDF } from "jspdf";
 import L from "leaflet";
 import "leaflet-draw";
@@ -57,6 +58,7 @@ interface MapViewProps {
 
 export interface MapViewHandle {
   exportCurrentView: () => Promise<{ ok: boolean; message: string }>;
+  captureScreenshot: () => Promise<{ ok: boolean; message: string }>;
 }
 
 const haryanaCenter: [number, number] = [29.0588, 76.0856];
@@ -862,6 +864,60 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
               error instanceof Error
                 ? `Map PDF export failed: ${error.message}`
                 : "Map PDF export failed. Please wait for tiles to finish loading and try again.",
+          };
+        }
+      },
+      captureScreenshot: async () => {
+        if (!captureRef.current) {
+          return {
+            ok: false,
+            message: "Unable to capture because the map view is not ready.",
+          };
+        }
+
+        try {
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, 400);
+          });
+
+          const blob = await domToBlob(captureRef.current, {
+            backgroundColor: "#ffffff",
+            pixelRatio: Math.min(window.devicePixelRatio || 2, 2),
+            cacheBust: true,
+            includeQueryParams: true,
+            skipFonts: true,
+          });
+
+          if (!blob) {
+            return { ok: false, message: "Failed to create image." };
+          }
+
+          const objectUrl = URL.createObjectURL(blob);
+          const safeTimestamp = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace(/[T:]/g, "-");
+          const filename = `haryana-gis-screenshot-${safeTimestamp}.png`;
+          const link = document.createElement("a");
+          link.href = objectUrl;
+          link.download = filename;
+          link.rel = "noopener";
+          document.body.append(link);
+          link.click();
+          link.remove();
+          window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+
+          return {
+            ok: true,
+            message: "Screenshot saved successfully.",
+          };
+        } catch (error) {
+          return {
+            ok: false,
+            message:
+              error instanceof Error
+                ? `Screenshot failed: ${error.message}`
+                : "Screenshot failed. Please wait for tiles to finish loading and try again.",
           };
         }
       },

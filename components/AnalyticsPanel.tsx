@@ -106,8 +106,8 @@ export default function AnalyticsPanel({
                 <div className="relative">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <span className="inline-flex items-center gap-2 rounded-full border border-sky-100 bg-sky-50/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-800">
-                        <BarChart3 className="h-3.5 w-3.5" />
+                      <span className="inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-sky-100 bg-sky-50/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-800">
+                        <BarChart3 className="h-3.5 w-3.5 shrink-0" />
                         {panelData.entityLabel}
                       </span>
                       <h2 className="mt-3 text-[1.2rem] font-semibold tracking-tight text-slate-950">
@@ -138,7 +138,7 @@ export default function AnalyticsPanel({
                   <div className="mt-4 rounded-[22px] border border-slate-200/80 bg-white/88 p-3.5 shadow-[0_18px_40px_-40px_rgba(15,23,42,0.35)]">
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                        <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
                           Survey Completion
                         </p>
                         <p className="mt-1.5 text-[1.6rem] font-semibold tracking-tight text-slate-950">
@@ -166,7 +166,7 @@ export default function AnalyticsPanel({
                       <Camera className="h-4.5 w-4.5" />
                     </span>
                     <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+                      <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
                         Image Section
                       </p>
                       <p className="mt-1 text-sm font-semibold text-slate-950">
