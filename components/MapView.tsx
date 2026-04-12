@@ -1,24 +1,30 @@
 "use client";
 
 import type { MutableRefObject } from "react";
-import { useEffect, useRef } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import L from "leaflet";
 import "leaflet-draw";
-import { renderToStaticMarkup } from "react-dom/server";
 import {
   GeoJSON,
   MapContainer,
   Marker,
   Pane,
-  Popup,
+  ScaleControl,
   TileLayer,
   useMap,
 } from "react-leaflet";
 
-import ForestPopupCard from "@/components/ForestPopupCard";
-import PopupCard from "@/components/PopupCard";
-import VillagePillarPopupCard from "@/components/VillagePillarPopupCard";
-import VillagePopupCard from "@/components/VillagePopupCard";
+import MapSelectionDrawer, {
+  type MapSelection,
+} from "@/components/MapSelectionDrawer";
 import {
   adminCollection,
   forestCollection,
@@ -30,8 +36,10 @@ import type {
   BasemapId,
   ForestProperties,
   LayerVisibility,
+  PillarProperties,
   PillarFeatureCollection,
   PillarStatus,
+  VillagePillarProperties,
   VillagePillarFeatureCollection,
   VillageProperties,
 } from "@/types/gis";
@@ -45,6 +53,10 @@ interface MapViewProps {
     nonce: number;
   } | null;
   onFocusHandled: () => void;
+}
+
+export interface MapViewHandle {
+  exportCurrentView: () => Promise<{ ok: boolean; message: string }>;
 }
 
 const haryanaCenter: [number, number] = [29.0588, 76.0856];
@@ -135,48 +147,221 @@ function MeasurementControls() {
   return null;
 }
 
-function PopupVisibilityController() {
-  const map = useMap();
+function createForestSelection(
+  forest: ForestProperties,
+  polygonCoordinates: [number, number][],
+): MapSelection {
+  return {
+    kind: "forest",
+    forest,
+    perimeterKm: getPolygonPerimeterKm(polygonCoordinates),
+    boundaryPillars: getBoundaryPillarCount(
+      polygonCoordinates,
+      pillarsCollection.features,
+    ),
+  };
+}
 
-  useEffect(() => {
-    const container = map.getContainer();
+function createVillageSelection(
+  village: VillageProperties,
+  polygonCoordinates: [number, number][],
+): MapSelection {
+  return {
+    kind: "village",
+    village,
+    perimeterKm: getPolygonPerimeterKm(polygonCoordinates),
+    boundaryPillars: getBoundaryPillarCount(
+      polygonCoordinates,
+      villagePillarsCollection.features,
+    ),
+  };
+}
 
-    const handlePopupOpen = () => {
-      container.classList.add("popup-active");
-    };
+function createForestPillarSelection(pillar: PillarProperties): MapSelection {
+  return {
+    kind: "forestPillar",
+    pillar,
+  };
+}
 
-    const handlePopupClose = () => {
-      container.classList.remove("popup-active");
-    };
+function createVillagePillarSelection(
+  pillar: VillagePillarProperties,
+): MapSelection {
+  return {
+    kind: "villagePillar",
+    pillar,
+  };
+}
 
-    map.on("popupopen", handlePopupOpen);
-    map.on("popupclose", handlePopupClose);
+function MapLegend({
+  basemap,
+  layers,
+}: {
+  basemap: BasemapId;
+  layers: LayerVisibility;
+}) {
+  return (
+    <div
+      className="pointer-events-none absolute bottom-4 left-4 z-[700] w-[240px] rounded-[24px] p-4"
+      style={{
+        border: "1px solid rgba(255,255,255,0.75)",
+        background: "rgba(255,255,255,0.96)",
+        boxShadow: "0 24px 60px -36px rgba(15,23,42,0.45)",
+      }}
+    >
+      <p
+        className="text-[11px] font-semibold uppercase tracking-[0.22em]"
+        style={{ color: "#64748b" }}
+      >
+        Map Legend
+      </p>
+      <p className="mt-1 text-sm font-semibold" style={{ color: "#020617" }}>
+        Basemap: {basemap === "street" ? "Street Map" : "Satellite Map"}
+      </p>
 
-    return () => {
-      map.off("popupopen", handlePopupOpen);
-      map.off("popupclose", handlePopupClose);
-      container.classList.remove("popup-active");
-    };
-  }, [map]);
+      <div className="mt-3 space-y-2.5 text-sm" style={{ color: "#334155" }}>
+        {layers.forest && (
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-3.5 w-5 rounded-sm border-2"
+              style={{
+                borderColor: "#166534",
+                background: "rgba(74, 222, 128, 0.5)",
+              }}
+            />
+            <span>Forest Boundary</span>
+          </div>
+        )}
+        {layers.pillars && (
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-3.5 w-3.5 rounded-full border-2"
+              style={{
+                borderColor: "#166534",
+                background: "#4ade80",
+                boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
+              }}
+            />
+            <span>Forest Pillar Point</span>
+          </div>
+        )}
+        {layers.villages && (
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-3.5 w-5 rounded-sm border-2"
+              style={{
+                borderColor: "#b45309",
+                background: "rgba(251, 191, 36, 0.5)",
+              }}
+            />
+            <span>Village Land Parcel</span>
+          </div>
+        )}
+        {layers.villagePillars && (
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-3 w-3 rounded-full border-2"
+              style={{
+                borderColor: "#c2410c",
+                background: "#f97316",
+                boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
+              }}
+            />
+            <span>Village Boundary Pillar</span>
+          </div>
+        )}
+        {layers.admin && (
+          <div className="flex items-center gap-3">
+            <span
+              className="inline-block h-0.5 w-5 rounded-full"
+              style={{ background: "rgba(29, 78, 216, 0.9)" }}
+            />
+            <span>Administrative Boundary</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-  return null;
+function getSelectionExportData(selection: MapSelection) {
+  switch (selection.kind) {
+    case "forest":
+      return {
+        label: "Forest Boundary",
+        title: selection.forest.name,
+        description:
+          "Boundary parcel under active forest survey and demarcation review.",
+        accent: [6, 95, 70] as const,
+        fields: [
+          ["Division", selection.forest.division],
+          ["Area", `${selection.forest.area_ha.toLocaleString("en-IN")} ha`],
+          ["Perimeter", `${selection.perimeterKm.toFixed(2)} km`],
+          ["Boundary Pillars", String(selection.boundaryPillars)],
+        ],
+      };
+    case "village":
+      return {
+        label: "Village Land Parcel",
+        title: selection.village.name,
+        description:
+          "Revenue village land parcel falling within notified forest extent.",
+        accent: [154, 52, 18] as const,
+        fields: [
+          ["Tehsil", selection.village.tehsil],
+          ["District", selection.village.district],
+          ["Area", `${selection.village.area_ha.toLocaleString("en-IN")} ha`],
+          ["Perimeter", `${selection.perimeterKm.toFixed(2)} km`],
+          ["Boundary Pillars", String(selection.boundaryPillars)],
+          ["Settlement Stage", selection.village.settlement_stage],
+        ],
+      };
+    case "forestPillar":
+      return {
+        label: "Demarcation Pillar",
+        title: selection.pillar.id,
+        description:
+          "Field-verified survey reference for forest settlement review.",
+        accent: [15, 23, 42] as const,
+        fields: [
+          ["Status", selection.pillar.status],
+          ["Village", selection.pillar.village],
+          ["District", selection.pillar.district],
+          ["Survey Date", selection.pillar.survey_date],
+          ["Survey No", selection.pillar.survey_no],
+        ],
+      };
+    case "villagePillar":
+      return {
+        label: "Village Boundary Pillar",
+        title: selection.pillar.id,
+        description:
+          "Boundary reference pillar for village land parcel demarcation inside forest limits.",
+        accent: [194, 65, 12] as const,
+        fields: [
+          ["Status", selection.pillar.status],
+          ["Village", selection.pillar.village],
+          ["District", selection.pillar.district],
+          ["Survey Date", selection.pillar.survey_date],
+          ["Survey No", selection.pillar.survey_no],
+        ],
+      };
+  }
 }
 
 function FocusController({
   forestPillars,
   villagePillars,
-  forestPillarRefs,
-  villagePillarRefs,
   villageLayerRefs,
   focusRequest,
+  onSelectionChange,
   onFocusHandled,
 }: {
   forestPillars: PillarFeatureCollection["features"];
   villagePillars: VillagePillarFeatureCollection["features"];
-  forestPillarRefs: MutableRefObject<Record<string, L.Marker | null>>;
-  villagePillarRefs: MutableRefObject<Record<string, L.Marker | null>>;
   villageLayerRefs: MutableRefObject<Record<string, L.Layer | null>>;
   focusRequest: MapViewProps["focusRequest"];
+  onSelectionChange: (selection: MapSelection | null) => void;
   onFocusHandled: () => void;
 }) {
   const map = useMap();
@@ -204,18 +389,44 @@ function FocusController({
         duration: 1.15,
         padding: [80, 80],
       });
+      const villageFeature = villagesCollection.features.find(
+        (feature) => feature.properties.id === focusRequest.targetId,
+      );
 
-      window.setTimeout(() => {
-        villageLayer.openPopup();
-      }, 850);
+      if (villageFeature?.geometry.type === "Polygon") {
+        onSelectionChange(
+          createVillageSelection(
+            villageFeature.properties,
+            villageFeature.geometry.coordinates[0] as [number, number][],
+          ),
+        );
+      }
 
       onFocusHandled();
       return;
     }
 
-    const targetCollection =
-      focusRequest.type === "villagePillar" ? villagePillars : forestPillars;
-    const target = targetCollection.find(
+    if (focusRequest.type === "villagePillar") {
+      const target = villagePillars.find(
+        (feature) => feature.properties.id === focusRequest.targetId,
+      );
+
+      if (!target) {
+        onFocusHandled();
+        return;
+      }
+
+      const [lng, lat] = target.geometry.coordinates;
+      map.flyTo([lat, lng], 12, {
+        animate: true,
+        duration: 1.25,
+      });
+      onSelectionChange(createVillagePillarSelection(target.properties));
+      onFocusHandled();
+      return;
+    }
+
+    const target = forestPillars.find(
       (feature) => feature.properties.id === focusRequest.targetId,
     );
 
@@ -229,24 +440,16 @@ function FocusController({
       animate: true,
       duration: 1.25,
     });
-
-    window.setTimeout(() => {
-      if (focusRequest.type === "villagePillar") {
-        villagePillarRefs.current[target.properties.id]?.openPopup();
-      } else {
-        forestPillarRefs.current[target.properties.id]?.openPopup();
-      }
-    }, 900);
+    onSelectionChange(createForestPillarSelection(target.properties));
 
     onFocusHandled();
   }, [
     focusRequest,
-    forestPillarRefs,
     forestPillars,
     map,
+    onSelectionChange,
     onFocusHandled,
     villageLayerRefs,
-    villagePillarRefs,
     villagePillars,
   ]);
 
@@ -263,12 +466,32 @@ function createPillarIcon(status: PillarStatus) {
   });
 }
 
+function createHighlightedPillarIcon(status: PillarStatus) {
+  return L.divIcon({
+    className: "custom-pillar-icon",
+    html: `<span class="pillar-marker pillar-marker-selected ${pillarMarkerStyles[status]}"></span>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+    popupAnchor: [0, -8],
+  });
+}
+
 function createVillagePillarIcon() {
   return L.divIcon({
     className: "custom-pillar-icon",
     html: '<span class="village-pillar-marker village-pillar-complete"></span>',
     iconSize: [12, 12],
     iconAnchor: [6, 6],
+    popupAnchor: [0, -8],
+  });
+}
+
+function createHighlightedVillagePillarIcon() {
+  return L.divIcon({
+    className: "custom-pillar-icon",
+    html: '<span class="village-pillar-marker village-pillar-complete village-pillar-marker-selected"></span>',
+    iconSize: [18, 18],
+    iconAnchor: [9, 9],
     popupAnchor: [0, -8],
   });
 }
@@ -297,9 +520,7 @@ function getBoundaryPillarCount(
   pillars: PillarFeatureCollection["features"],
 ) {
   const boundaryVertices = new Set(
-    polygonCoordinates
-      .slice(0, -1)
-      .map(getCoordinateKey),
+    polygonCoordinates.slice(0, -1).map(getCoordinateKey),
   );
 
   return pillars.filter((pillar) => {
@@ -307,232 +528,458 @@ function getBoundaryPillarCount(
   }).length;
 }
 
-export default function MapView({
-  basemap,
-  layers,
-  focusRequest,
-  onFocusHandled,
-}: MapViewProps) {
-  const forestPillarRefs = useRef<Record<string, L.Marker | null>>({});
-  const villagePillarRefs = useRef<Record<string, L.Marker | null>>({});
+function isForestSelected(
+  selection: MapSelection | null,
+  forest: ForestProperties | undefined,
+) {
+  return Boolean(
+    selection &&
+    selection.kind === "forest" &&
+    forest &&
+    selection.forest.name === forest.name,
+  );
+}
+
+function isVillageSelected(
+  selection: MapSelection | null,
+  village: VillageProperties | undefined,
+) {
+  return Boolean(
+    selection &&
+    selection.kind === "village" &&
+    village &&
+    selection.village.id === village.id,
+  );
+}
+
+function isForestPillarSelected(
+  selection: MapSelection | null,
+  pillar: PillarProperties,
+) {
+  return Boolean(
+    selection &&
+    selection.kind === "forestPillar" &&
+    selection.pillar.id === pillar.id,
+  );
+}
+
+function isVillagePillarSelected(
+  selection: MapSelection | null,
+  pillar: VillagePillarProperties,
+) {
+  return Boolean(
+    selection &&
+    selection.kind === "villagePillar" &&
+    selection.pillar.id === pillar.id,
+  );
+}
+
+const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
+  { basemap, layers, focusRequest, onFocusHandled }: MapViewProps,
+  ref,
+) {
   const villageLayerRefs = useRef<Record<string, L.Layer | null>>({});
+  const captureRef = useRef<HTMLDivElement | null>(null);
   const activeBasemap = basemapConfig[basemap];
+  const [selection, setSelection] = useState<MapSelection | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      exportCurrentView: async () => {
+        if (!captureRef.current) {
+          return {
+            ok: false,
+            message: "Unable to export PDF because the map view is not ready.",
+          };
+        }
+
+        try {
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, 250);
+          });
+
+          const canvas = await html2canvas(captureRef.current, {
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#ffffff",
+            scale: Math.min(window.devicePixelRatio || 2, 2),
+            logging: false,
+          });
+
+          const imageData = canvas.toDataURL("image/png");
+          const pdf = new jsPDF({
+            orientation: "landscape",
+            unit: "mm",
+            format: "a4",
+          });
+
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 10;
+          const headerHeight = 14;
+          const detailWidth = selection ? 82 : 0;
+          const gap = selection ? 8 : 0;
+          const availableWidth = pageWidth - margin * 2 - detailWidth - gap;
+          const availableHeight = pageHeight - margin * 2 - headerHeight;
+          const imageRatio = canvas.width / canvas.height;
+
+          let imageWidth = availableWidth;
+          let imageHeight = imageWidth / imageRatio;
+
+          if (imageHeight > availableHeight) {
+            imageHeight = availableHeight;
+            imageWidth = imageHeight * imageRatio;
+          }
+
+          const imageX = (pageWidth - imageWidth) / 2;
+          const imageY = margin + headerHeight;
+          const timestamp = new Date().toLocaleString("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          });
+
+          pdf.setFontSize(15);
+          pdf.text(
+            "Haryana Forest Survey & Demarcation GIS Map Export",
+            margin,
+            12,
+          );
+          pdf.setFontSize(9);
+          pdf.setTextColor(71, 85, 105);
+          pdf.text(
+            `Basemap: ${basemap === "street" ? "Street Map" : "Satellite Map"} | Exported: ${timestamp}`,
+            margin,
+            18,
+          );
+          pdf.addImage(
+            imageData,
+            "PNG",
+            imageX,
+            imageY,
+            imageWidth,
+            imageHeight,
+          );
+
+          if (selection) {
+            const detail = getSelectionExportData(selection);
+            const cardX = imageX + imageWidth + gap;
+            const cardY = imageY;
+            const cardHeight = Math.min(imageHeight, availableHeight);
+            const [r, g, b] = detail.accent;
+            let cursorY = cardY + 10;
+
+            pdf.setDrawColor(226, 232, 240);
+            pdf.setFillColor(255, 255, 255);
+            pdf.roundedRect(cardX, cardY, detailWidth, cardHeight, 6, 6, "FD");
+
+            pdf.setFillColor(r, g, b);
+            pdf.roundedRect(cardX, cardY, detailWidth, 34, 6, 6, "F");
+            pdf.setFillColor(255, 255, 255);
+            pdf.rect(cardX, cardY + 28, detailWidth, 6, "F");
+
+            pdf.setTextColor(226, 232, 240);
+            pdf.setFontSize(8);
+            pdf.text(detail.label.toUpperCase(), cardX + 6, cursorY);
+
+            cursorY += 8;
+            pdf.setFontSize(15);
+            pdf.setTextColor(255, 255, 255);
+            const titleLines = pdf.splitTextToSize(
+              detail.title,
+              detailWidth - 12,
+            );
+            pdf.text(titleLines, cardX + 6, cursorY);
+
+            cursorY += titleLines.length * 6 + 4;
+            pdf.setFontSize(9);
+            pdf.setTextColor(226, 232, 240);
+            const descLines = pdf.splitTextToSize(
+              detail.description,
+              detailWidth - 12,
+            );
+            pdf.text(descLines, cardX + 6, cursorY);
+
+            cursorY = cardY + 42;
+            pdf.setTextColor(15, 23, 42);
+            pdf.setFontSize(9);
+
+            detail.fields.forEach(([label, value]) => {
+              const boxHeight = 18;
+
+              if (cursorY + boxHeight > cardY + cardHeight - 8) {
+                return;
+              }
+
+              pdf.setFillColor(248, 250, 252);
+              pdf.setDrawColor(226, 232, 240);
+              pdf.roundedRect(
+                cardX + 4,
+                cursorY,
+                detailWidth - 8,
+                boxHeight,
+                4,
+                4,
+                "FD",
+              );
+
+              pdf.setFontSize(7);
+              pdf.setTextColor(100, 116, 139);
+              pdf.text(label.toUpperCase(), cardX + 8, cursorY + 5.5);
+
+              pdf.setFontSize(10);
+              pdf.setTextColor(15, 23, 42);
+              const valueLines = pdf.splitTextToSize(value, detailWidth - 16);
+              pdf.text(valueLines[0], cardX + 8, cursorY + 12);
+
+              cursorY += boxHeight + 4;
+            });
+          }
+
+          const safeTimestamp = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace(/[T:]/g, "-");
+          const filename = `haryana-gis-map-export-${safeTimestamp}.pdf`;
+          const blob = pdf.output("blob");
+          const objectUrl = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+
+          link.href = objectUrl;
+          link.download = filename;
+          link.rel = "noopener";
+          document.body.append(link);
+          link.click();
+          link.remove();
+
+          window.setTimeout(() => {
+            URL.revokeObjectURL(objectUrl);
+          }, 1500);
+
+          return {
+            ok: true,
+            message: "Map PDF exported successfully with legend and scale.",
+          };
+        } catch (error) {
+          return {
+            ok: false,
+            message:
+              error instanceof Error
+                ? `Map PDF export failed: ${error.message}`
+                : "Map PDF export failed. Please wait for tiles to finish loading and try again.",
+          };
+        }
+      },
+    }),
+    [basemap],
+  );
 
   return (
-    <div className="relative h-full w-full">
-      <MapContainer
-        center={haryanaCenter}
-        zoom={8}
-        zoomControl
-        scrollWheelZoom
-        className="h-full w-full"
-      >
-        <TileLayer
-          attribution={activeBasemap.attribution}
-          url={activeBasemap.url}
-          {...(activeBasemap.subdomains
-            ? { subdomains: activeBasemap.subdomains }
-            : {})}
-        />
+    <div className="relative h-full w-full overflow-hidden">
+      <div ref={captureRef} className="absolute inset-0">
+        <MapContainer
+          center={haryanaCenter}
+          zoom={8}
+          zoomControl
+          scrollWheelZoom
+          className="h-full w-full"
+        >
+          <TileLayer
+            attribution={activeBasemap.attribution}
+            url={activeBasemap.url}
+            crossOrigin="anonymous"
+            {...(activeBasemap.subdomains
+              ? { subdomains: activeBasemap.subdomains }
+              : {})}
+          />
 
-        <MeasurementControls />
-        <PopupVisibilityController />
-        <FocusController
-          forestPillars={pillarsCollection.features}
-          villagePillars={villagePillarsCollection.features}
-          forestPillarRefs={forestPillarRefs}
-          villagePillarRefs={villagePillarRefs}
-          villageLayerRefs={villageLayerRefs}
-          focusRequest={focusRequest}
-          onFocusHandled={onFocusHandled}
-        />
+          <ScaleControl position="bottomleft" imperial={false} />
+          <MeasurementControls />
+          <FocusController
+            forestPillars={pillarsCollection.features}
+            villagePillars={villagePillarsCollection.features}
+            villageLayerRefs={villageLayerRefs}
+            focusRequest={focusRequest}
+            onSelectionChange={setSelection}
+            onFocusHandled={onFocusHandled}
+          />
 
-        {layers.admin && (
-          <Pane name="admin" style={{ zIndex: 350 }}>
-            <GeoJSON
-              data={adminCollection}
-              style={() => ({
-                color: "#1d4ed8",
-                weight: 2.5,
-                dashArray: "8 8",
-                fillOpacity: 0.03,
+          {layers.admin && (
+            <Pane name="admin" style={{ zIndex: 350 }}>
+              <GeoJSON
+                data={adminCollection}
+                style={() => ({
+                  color: "#1d4ed8",
+                  weight: 2.5,
+                  dashArray: "8 8",
+                  fillOpacity: 0.03,
+                })}
+                interactive={false}
+              />
+            </Pane>
+          )}
+
+          {layers.forest && (
+            <Pane name="forest" style={{ zIndex: 400 }}>
+              <GeoJSON
+                data={forestCollection}
+                style={(feature) => {
+                  const forest = feature?.properties as
+                    | ForestProperties
+                    | undefined;
+                  const selected = isForestSelected(selection, forest);
+
+                  return {
+                    color: selected ? "#065f46" : "#166534",
+                    weight: selected ? 4.5 : 2.5,
+                    fillColor: selected ? "#34d399" : "#22c55e",
+                    fillOpacity: selected ? 0.28 : 0.18,
+                    className: selected ? "selected-map-area" : undefined,
+                  };
+                }}
+                onEachFeature={(feature, layer) => {
+                  const forest = feature.properties as
+                    | ForestProperties
+                    | undefined;
+                  const polygonCoordinates =
+                    feature.geometry.type === "Polygon"
+                      ? (feature.geometry.coordinates[0] as [number, number][])
+                      : undefined;
+
+                  const name = forest?.name;
+                  if (name) {
+                    layer.bindTooltip(name, {
+                      sticky: true,
+                      direction: "top",
+                      className: "map-tooltip",
+                    });
+                  }
+
+                  if (forest && polygonCoordinates) {
+                    layer.on("click", () => {
+                      setSelection(
+                        createForestSelection(forest, polygonCoordinates),
+                      );
+                    });
+                  }
+                }}
+              />
+            </Pane>
+          )}
+
+          {layers.villages && (
+            <Pane name="villages" style={{ zIndex: 430 }}>
+              <GeoJSON
+                data={villagesCollection}
+                style={(feature) => {
+                  const village = feature?.properties as
+                    | VillageProperties
+                    | undefined;
+                  const selected = isVillageSelected(selection, village);
+
+                  return {
+                    color: selected ? "#9a3412" : "#b45309",
+                    weight: selected ? 3.5 : 2,
+                    fillColor: selected ? "#fb923c" : "#f59e0b",
+                    fillOpacity: selected ? 0.28 : 0.2,
+                    dashArray: selected ? undefined : "4 4",
+                    className: selected
+                      ? "selected-map-area selected-map-area-village"
+                      : undefined,
+                  };
+                }}
+                onEachFeature={(feature, layer) => {
+                  const village = feature.properties as
+                    | VillageProperties
+                    | undefined;
+                  const polygonCoordinates =
+                    feature.geometry.type === "Polygon"
+                      ? (feature.geometry.coordinates[0] as [number, number][])
+                      : undefined;
+
+                  if (village) {
+                    villageLayerRefs.current[village.id] = layer;
+                    layer.bindTooltip(village.name, {
+                      sticky: true,
+                      direction: "top",
+                      className: "map-tooltip village-tooltip",
+                    });
+                  }
+
+                  if (village && polygonCoordinates) {
+                    layer.on("click", () => {
+                      setSelection(
+                        createVillageSelection(village, polygonCoordinates),
+                      );
+                    });
+                  }
+                }}
+              />
+            </Pane>
+          )}
+
+          {layers.pillars && (
+            <Pane name="pillars">
+              {pillarsCollection.features.map((feature) => {
+                const [lng, lat] = feature.geometry.coordinates;
+                const pillar = feature.properties;
+
+                return (
+                  <Marker
+                    key={pillar.id}
+                    position={[lat, lng]}
+                    icon={
+                      isForestPillarSelected(selection, pillar)
+                        ? createHighlightedPillarIcon(pillar.status)
+                        : createPillarIcon(pillar.status)
+                    }
+                    riseOnHover
+                    eventHandlers={{
+                      click: () => {
+                        setSelection(createForestPillarSelection(pillar));
+                      },
+                    }}
+                  />
+                );
               })}
-              interactive={false}
-            />
-          </Pane>
-        )}
+            </Pane>
+          )}
 
-        {layers.forest && (
-          <Pane name="forest" style={{ zIndex: 400 }}>
-            <GeoJSON
-              data={forestCollection}
-              style={() => ({
-                color: "#166534",
-                weight: 2.5,
-                fillColor: "#22c55e",
-                fillOpacity: 0.18,
+          {layers.villagePillars && (
+            <Pane name="village-pillars" style={{ zIndex: 470 }}>
+              {villagePillarsCollection.features.map((feature) => {
+                const [lng, lat] = feature.geometry.coordinates;
+                const pillar = feature.properties;
+
+                return (
+                  <Marker
+                    key={pillar.id}
+                    position={[lat, lng]}
+                    icon={
+                      isVillagePillarSelected(selection, pillar)
+                        ? createHighlightedVillagePillarIcon()
+                        : createVillagePillarIcon()
+                    }
+                    riseOnHover
+                    eventHandlers={{
+                      click: () => {
+                        setSelection(createVillagePillarSelection(pillar));
+                      },
+                    }}
+                  />
+                );
               })}
-              onEachFeature={(feature, layer) => {
-                const forest = feature.properties as
-                  | ForestProperties
-                  | undefined;
-                const polygonCoordinates =
-                  feature.geometry.type === "Polygon"
-                    ? (feature.geometry.coordinates[0] as [number, number][])
-                    : undefined;
+            </Pane>
+          )}
+        </MapContainer>
 
-                const name = forest?.name;
-                if (name) {
-                  layer.bindTooltip(name, {
-                    sticky: true,
-                    direction: "top",
-                    className: "map-tooltip",
-                  });
-                }
+        <MapLegend basemap={basemap} layers={layers} />
+      </div>
 
-                if (forest && polygonCoordinates) {
-                  const perimeterKm = getPolygonPerimeterKm(polygonCoordinates);
-                  const boundaryPillars = getBoundaryPillarCount(
-                    polygonCoordinates,
-                    pillarsCollection.features,
-                  );
-
-                  layer.bindPopup(
-                    renderToStaticMarkup(
-                      <ForestPopupCard
-                        forest={forest}
-                        perimeterKm={perimeterKm}
-                        boundaryPillars={boundaryPillars}
-                      />,
-                    ),
-                    {
-                      closeButton: false,
-                      className: "premium-popup",
-                      autoPanPadding: [40, 40],
-                    },
-                  );
-                }
-              }}
-            />
-          </Pane>
-        )}
-
-        {layers.villages && (
-          <Pane name="villages" style={{ zIndex: 430 }}>
-            <GeoJSON
-              data={villagesCollection}
-              style={() => ({
-                color: "#b45309",
-                weight: 2,
-                fillColor: "#f59e0b",
-                fillOpacity: 0.2,
-                dashArray: "4 4",
-              })}
-              onEachFeature={(feature, layer) => {
-                const village = feature.properties as
-                  | VillageProperties
-                  | undefined;
-                const polygonCoordinates =
-                  feature.geometry.type === "Polygon"
-                    ? (feature.geometry.coordinates[0] as [number, number][])
-                    : undefined;
-
-                if (village) {
-                  villageLayerRefs.current[village.id] = layer;
-                  layer.bindTooltip(village.name, {
-                    sticky: true,
-                    direction: "top",
-                    className: "map-tooltip village-tooltip",
-                  });
-                }
-
-                if (village && polygonCoordinates) {
-                  const perimeterKm = getPolygonPerimeterKm(polygonCoordinates);
-                  const boundaryPillars = getBoundaryPillarCount(
-                    polygonCoordinates,
-                    villagePillarsCollection.features,
-                  );
-
-                  layer.bindPopup(
-                    renderToStaticMarkup(
-                      <VillagePopupCard
-                        village={village}
-                        perimeterKm={perimeterKm}
-                        boundaryPillars={boundaryPillars}
-                      />,
-                    ),
-                    {
-                      closeButton: false,
-                      className: "premium-popup",
-                      autoPanPadding: [40, 40],
-                    },
-                  );
-                }
-              }}
-            />
-          </Pane>
-        )}
-
-        {layers.pillars && (
-          <Pane name="pillars">
-            {pillarsCollection.features.map((feature) => {
-              const [lng, lat] = feature.geometry.coordinates;
-              const pillar = feature.properties;
-
-              return (
-                <Marker
-                  key={pillar.id}
-                  position={[lat, lng]}
-                  icon={createPillarIcon(pillar.status)}
-                  ref={(marker) => {
-                    forestPillarRefs.current[pillar.id] = marker;
-                  }}
-                  riseOnHover
-                >
-                  <Popup
-                    closeButton={false}
-                    offset={[4, -18]}
-                    className="premium-popup"
-                    autoPanPadding={[40, 40]}
-                  >
-                    <PopupCard pillar={pillar} />
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </Pane>
-        )}
-
-        {layers.villagePillars && (
-          <Pane name="village-pillars" style={{ zIndex: 470 }}>
-            {villagePillarsCollection.features.map((feature) => {
-              const [lng, lat] = feature.geometry.coordinates;
-              const pillar = feature.properties;
-
-              return (
-                <Marker
-                  key={pillar.id}
-                  position={[lat, lng]}
-                  icon={createVillagePillarIcon()}
-                  ref={(marker) => {
-                    villagePillarRefs.current[pillar.id] = marker;
-                  }}
-                  riseOnHover
-                >
-                  <Popup
-                    closeButton={false}
-                    offset={[4, -14]}
-                    className="premium-popup"
-                    autoPanPadding={[40, 40]}
-                  >
-                    <VillagePillarPopupCard pillar={pillar} />
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </Pane>
-        )}
-      </MapContainer>
+      <MapSelectionDrawer
+        selection={selection}
+        onClose={() => setSelection(null)}
+      />
 
       {/* <div className="pointer-events-none absolute right-4 top-4 z-[500] rounded-2xl border border-white/70 bg-white/88 px-4 py-3 shadow-lg backdrop-blur">
         <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
@@ -556,4 +1003,6 @@ export default function MapView({
       </div> */}
     </div>
   );
-}
+});
+
+export default MapView;

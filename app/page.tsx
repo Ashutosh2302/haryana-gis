@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   BarChart3,
@@ -12,6 +12,7 @@ import {
 
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
+import type { MapViewHandle } from "@/components/MapView";
 import {
   pillarsCollection,
   villagePillarsCollection,
@@ -49,9 +50,11 @@ export default function Home() {
   const [basemap, setBasemap] = useState<"street" | "satellite">("street");
   const [layers, setLayers] = useState<LayerVisibility>(defaultLayers);
   const [query, setQuery] = useState("");
+  const [isExporting, setIsExporting] = useState(false);
   const [searchMessage, setSearchMessage] = useState(
     "Ready for search. Try `HR-PILLAR-001`, `Kaimbwala`, or `HR-VP-001`.",
   );
+  const mapViewRef = useRef<MapViewHandle | null>(null);
   const [focusRequest, setFocusRequest] = useState<{
     type: "forestPillar" | "villagePillar" | "village";
     targetId: string;
@@ -59,7 +62,10 @@ export default function Home() {
   } | null>(null);
 
   const statusMetrics = useMemo(() => {
-    return [...pillarsCollection.features, ...villagePillarsCollection.features].reduce(
+    return [
+      ...pillarsCollection.features,
+      ...villagePillarsCollection.features,
+    ].reduce(
       (accumulator, feature) => {
         accumulator[feature.properties.status] += 1;
         return accumulator;
@@ -114,14 +120,16 @@ export default function Home() {
       return;
     }
 
-    const villagePillarMatch = villagePillarsCollection.features.find((feature) => {
-      const { id, village, survey_no: surveyNo } = feature.properties;
-      return (
-        id.toLowerCase().includes(normalized) ||
-        village.toLowerCase().includes(normalized) ||
-        surveyNo.toLowerCase().includes(normalized)
-      );
-    });
+    const villagePillarMatch = villagePillarsCollection.features.find(
+      (feature) => {
+        const { id, village, survey_no: surveyNo } = feature.properties;
+        return (
+          id.toLowerCase().includes(normalized) ||
+          village.toLowerCase().includes(normalized) ||
+          surveyNo.toLowerCase().includes(normalized)
+        );
+      },
+    );
 
     if (villagePillarMatch) {
       setLayers((current) => ({
@@ -171,6 +179,21 @@ export default function Home() {
     );
   };
 
+  const handleExport = async () => {
+    setIsExporting(true);
+    setSearchMessage("Preparing PDF export for the current map view...");
+
+    const result = await mapViewRef.current?.exportCurrentView();
+
+    setIsExporting(false);
+    setSearchMessage(
+      result?.ok
+        ? "Map PDF exported successfully with legend and scale."
+        : (result?.message ??
+            "Map PDF export failed. Please wait for tiles to finish loading and try again."),
+    );
+  };
+
   return (
     <main className="flex min-h-screen bg-slate-200">
       <Sidebar
@@ -193,6 +216,7 @@ export default function Home() {
         <div className="mt-4 grid min-h-0 flex-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="min-h-[640px] overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)]">
             <MapView
+              ref={mapViewRef}
               basemap={basemap}
               layers={layers}
               focusRequest={focusRequest}
@@ -255,7 +279,9 @@ export default function Home() {
                 <div className="flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <CheckCircle2 className="h-5 w-5 text-emerald-700" />
-                    <span className="font-medium text-emerald-950">Verified</span>
+                    <span className="font-medium text-emerald-950">
+                      Verified
+                    </span>
                   </div>
                   <span className="text-lg font-semibold text-emerald-950">
                     {statusMetrics.Verified}
@@ -303,8 +329,8 @@ export default function Home() {
                   for the selected survey pillar.
                 </p>
                 <p>
-                  Draw tools support field review workflows for distance and area
-                  measurement directly on the map canvas.
+                  Draw tools support field review workflows for distance and
+                  area measurement directly on the map canvas.
                 </p>
               </div>
             </section>
