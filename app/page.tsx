@@ -1,18 +1,10 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
-import {
-  BarChart3,
-  CheckCircle2,
-  Clock3,
-  FileSearch,
-  ShieldAlert,
-} from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
-import type { MapViewHandle } from "@/components/MapView";
 import {
   pillarsCollection,
   villagePillarsCollection,
@@ -50,33 +42,14 @@ export default function Home() {
   const [basemap, setBasemap] = useState<"street" | "satellite">("street");
   const [layers, setLayers] = useState<LayerVisibility>(defaultLayers);
   const [query, setQuery] = useState("");
-  const [isExporting, setIsExporting] = useState(false);
   const [searchMessage, setSearchMessage] = useState(
     "Ready for search. Try `HR-PILLAR-001`, `Kaimbwala`, or `HR-VP-001`.",
   );
-  const mapViewRef = useRef<MapViewHandle | null>(null);
   const [focusRequest, setFocusRequest] = useState<{
     type: "forestPillar" | "villagePillar" | "village";
     targetId: string;
     nonce: number;
   } | null>(null);
-
-  const statusMetrics = useMemo(() => {
-    return [
-      ...pillarsCollection.features,
-      ...villagePillarsCollection.features,
-    ].reduce(
-      (accumulator, feature) => {
-        accumulator[feature.properties.status] += 1;
-        return accumulator;
-      },
-      {
-        Verified: 0,
-        Pending: 0,
-        Disputed: 0,
-      },
-    );
-  }, []);
 
   const handleLayerToggle = (layer: keyof LayerVisibility) => {
     setLayers((current) => ({
@@ -179,21 +152,6 @@ export default function Home() {
     );
   };
 
-  const handleExport = async () => {
-    setIsExporting(true);
-    setSearchMessage("Preparing PDF export for the current map view...");
-
-    const result = await mapViewRef.current?.exportCurrentView();
-
-    setIsExporting(false);
-    setSearchMessage(
-      result?.ok
-        ? "Map PDF exported successfully with legend and scale."
-        : (result?.message ??
-            "Map PDF export failed. Please wait for tiles to finish loading and try again."),
-    );
-  };
-
   return (
     <main className="flex min-h-screen bg-slate-200">
       <Sidebar
@@ -205,136 +163,23 @@ export default function Home() {
         onLayerToggle={handleLayerToggle}
       />
 
-      <section className="flex min-w-0 flex-1 flex-col bg-[linear-gradient(180deg,_#eef4fb_0%,_#f8fafc_48%,_#f1f5f9_100%)] p-4 xl:p-5">
-        <Topbar
-          query={query}
-          searchMessage={searchMessage}
-          onQueryChange={setQuery}
-          onSearch={handleSearch}
-        />
-
-        <div className="mt-4 grid min-h-0 flex-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="min-h-[640px] overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)]">
-            <MapView
-              ref={mapViewRef}
-              basemap={basemap}
-              layers={layers}
-              focusRequest={focusRequest}
-              onFocusHandled={() => setFocusRequest(null)}
+      <section className="min-w-0 flex-1 bg-[linear-gradient(180deg,_#eef4fb_0%,_#f8fafc_48%,_#f1f5f9_100%)] p-3 xl:p-4">
+        <div className="relative h-[calc(100vh-1.5rem)] overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)] xl:h-[calc(100vh-2rem)]">
+          <div className="pointer-events-none absolute left-20 right-3 top-3 z-[900] flex justify-start md:left-24 md:right-auto md:top-4">
+            <Topbar
+              query={query}
+              searchMessage={searchMessage}
+              onQueryChange={setQuery}
+              onSearch={handleSearch}
             />
           </div>
 
-          <aside className="grid gap-4 xl:grid-cols-3 2xl:grid-cols-1">
-            <section className="rounded-[28px] border border-white/70 bg-white/95 p-6 shadow-[0_20px_60px_-36px_rgba(15,23,42,0.35)]">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-                    Core Analytics
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-950">
-                    Survey Progress
-                  </h2>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-50 text-sky-700">
-                  <BarChart3 className="h-5 w-5" />
-                </div>
-              </div>
-
-              <div className="mt-6 grid gap-3">
-                <div className="rounded-3xl bg-slate-950 px-5 py-4 text-white">
-                  <p className="text-sm text-slate-300">Total Forest Area</p>
-                  <p className="mt-2 text-3xl font-semibold">12,540 ha</p>
-                </div>
-                <div className="rounded-3xl bg-slate-50 px-5 py-4">
-                  <p className="text-sm text-slate-500">Total Pillars</p>
-                  <p className="mt-2 text-3xl font-semibold text-slate-950">
-                    1,240
-                  </p>
-                </div>
-                <div className="rounded-3xl bg-emerald-50 px-5 py-4">
-                  <p className="text-sm text-emerald-700">Survey Completion</p>
-                  <p className="mt-2 text-3xl font-semibold text-emerald-950">
-                    78%
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-[28px] border border-white/70 bg-white/95 p-6 shadow-[0_20px_60px_-36px_rgba(15,23,42,0.35)]">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-                    Mock Survey Snapshot
-                  </p>
-                  <h2 className="mt-2 text-xl font-semibold text-slate-950">
-                    Pillar Status Mix
-                  </h2>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700">
-                  <FileSearch className="h-5 w-5" />
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                <div className="flex items-center justify-between rounded-2xl bg-emerald-50 px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-700" />
-                    <span className="font-medium text-emerald-950">
-                      Verified
-                    </span>
-                  </div>
-                  <span className="text-lg font-semibold text-emerald-950">
-                    {statusMetrics.Verified}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <Clock3 className="h-5 w-5 text-amber-700" />
-                    <span className="font-medium text-amber-950">Pending</span>
-                  </div>
-                  <span className="text-lg font-semibold text-amber-950">
-                    {statusMetrics.Pending}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between rounded-2xl bg-rose-50 px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <ShieldAlert className="h-5 w-5 text-rose-700" />
-                    <span className="font-medium text-rose-950">Disputed</span>
-                  </div>
-                  <span className="text-lg font-semibold text-rose-950">
-                    {statusMetrics.Disputed}
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            <section className="rounded-[28px] border border-white/70 bg-slate-950 p-6 text-slate-100 shadow-[0_20px_60px_-36px_rgba(15,23,42,0.55)]">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
-                Operational Notes
-              </p>
-              <h2 className="mt-2 text-xl font-semibold text-white">
-                Demo Highlights
-              </h2>
-
-              <div className="mt-6 space-y-4 text-sm leading-6 text-slate-300">
-                <p>
-                  Layer toggles provide quick operational control across
-                  basemaps, forest polygons, demarcation pillars, and district
-                  boundaries.
-                </p>
-                <p>
-                  Search recenters the map and opens a premium inspection card
-                  for the selected survey pillar.
-                </p>
-                <p>
-                  Draw tools support field review workflows for distance and
-                  area measurement directly on the map canvas.
-                </p>
-              </div>
-            </section>
-          </aside>
+          <MapView
+            basemap={basemap}
+            layers={layers}
+            focusRequest={focusRequest}
+            onFocusHandled={() => setFocusRequest(null)}
+          />
         </div>
       </section>
     </main>

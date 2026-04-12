@@ -386,7 +386,7 @@ function FocusController({
 
       map.fitBounds(villageLayer.getBounds(), {
         animate: true,
-        duration: 1.15,
+        duration: 1,
         padding: [80, 80],
       });
       const villageFeature = villagesCollection.features.find(
@@ -419,7 +419,7 @@ function FocusController({
       const [lng, lat] = target.geometry.coordinates;
       map.flyTo([lat, lng], 12, {
         animate: true,
-        duration: 1.25,
+        duration: 1,
       });
       onSelectionChange(createVillagePillarSelection(target.properties));
       onFocusHandled();
@@ -438,7 +438,7 @@ function FocusController({
     const [lng, lat] = target.geometry.coordinates;
     map.flyTo([lat, lng], 12, {
       animate: true,
-      duration: 1.25,
+      duration: 1,
     });
     onSelectionChange(createForestPillarSelection(target.properties));
 
