@@ -1,0 +1,26 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Panchkula District Boundary",
+        "category": "Administrative Boundary"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.745, 30.919],
+            [77.087, 30.92],
+            [77.125, 30.775],
+            [77.037, 30.616],
+            [76.761, 30.639],
+            [76.705, 30.798],
+            [76.745, 30.919]
+          ]
+        ]
+      }
+    }
+  ]
+}

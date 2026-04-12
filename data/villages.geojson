@@ -1,0 +1,74 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VLG-001",
+        "name": "Kaimbwala Village Lands",
+        "tehsil": "Kalka",
+        "district": "Panchkula",
+        "area_ha": 118,
+        "settlement_stage": "Boundary verification under review"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.843, 30.766],
+            [76.868, 30.782],
+            [76.862, 30.744],
+            [76.838, 30.739],
+            [76.843, 30.766]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VLG-002",
+        "name": "Mandhna Revenue Village",
+        "tehsil": "Morni",
+        "district": "Panchkula",
+        "area_ha": 96,
+        "settlement_stage": "Settlement record cross-check in progress"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.918, 30.724],
+            [76.946, 30.737],
+            [76.94, 30.708],
+            [76.914, 30.702],
+            [76.918, 30.724]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VLG-003",
+        "name": "Bhoj Koti Village Lands",
+        "tehsil": "Kalka",
+        "district": "Panchkula",
+        "area_ha": 84,
+        "settlement_stage": "Village enclave demarcation completed"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.965, 30.799],
+            [76.988, 30.804],
+            [76.984, 30.779],
+            [76.962, 30.775],
+            [76.965, 30.799]
+          ]
+        ]
+      }
+    }
+  ]
+}

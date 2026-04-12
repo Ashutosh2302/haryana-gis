@@ -1,0 +1,173 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-001",
+        "village": "Kaimbwala",
+        "district": "Panchkula",
+        "survey_date": "2026-03-03",
+        "survey_no": "KAI/2026/001",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.843, 30.766] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-002",
+        "village": "Kaimbwala",
+        "district": "Panchkula",
+        "survey_date": "2026-03-03",
+        "survey_no": "KAI/2026/002",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.868, 30.782] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-003",
+        "village": "Kaimbwala",
+        "district": "Panchkula",
+        "survey_date": "2026-03-04",
+        "survey_no": "KAI/2026/003",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.862, 30.744] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-004",
+        "village": "Kaimbwala",
+        "district": "Panchkula",
+        "survey_date": "2026-03-04",
+        "survey_no": "KAI/2026/004",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.838, 30.739] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-005",
+        "village": "Mandhna",
+        "district": "Panchkula",
+        "survey_date": "2026-03-05",
+        "survey_no": "MAN/2026/005",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.918, 30.724] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-006",
+        "village": "Mandhna",
+        "district": "Panchkula",
+        "survey_date": "2026-03-05",
+        "survey_no": "MAN/2026/006",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.946, 30.737] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-007",
+        "village": "Mandhna",
+        "district": "Panchkula",
+        "survey_date": "2026-03-06",
+        "survey_no": "MAN/2026/007",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.94, 30.708] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-008",
+        "village": "Mandhna",
+        "district": "Panchkula",
+        "survey_date": "2026-03-06",
+        "survey_no": "MAN/2026/008",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.914, 30.702] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-009",
+        "village": "Bhoj Koti",
+        "district": "Panchkula",
+        "survey_date": "2026-03-07",
+        "survey_no": "BHK/2026/009",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.965, 30.799] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-010",
+        "village": "Bhoj Koti",
+        "district": "Panchkula",
+        "survey_date": "2026-03-07",
+        "survey_no": "BHK/2026/010",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.988, 30.804] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-011",
+        "village": "Bhoj Koti",
+        "district": "Panchkula",
+        "survey_date": "2026-03-08",
+        "survey_no": "BHK/2026/011",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.984, 30.779] }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "HR-VP-012",
+        "village": "Bhoj Koti",
+        "district": "Panchkula",
+        "survey_date": "2026-03-08",
+        "survey_no": "BHK/2026/012",
+        "status": "Verified",
+        "image_url": "/pillar-placeholder.svg",
+        "boundary_type": "Village Boundary Pillar"
+      },
+      "geometry": { "type": "Point", "coordinates": [76.962, 30.775] }
+    }
+  ]
+}

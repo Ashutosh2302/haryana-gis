@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Morni Hills Forest",
+        "division": "Panchkula Forest Division",
+        "area_ha": 4280
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.818, 30.822],
+            [76.904, 30.867],
+            [76.982, 30.824],
+            [76.968, 30.731],
+            [76.868, 30.711],
+            [76.81, 30.761],
+            [76.818, 30.822]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Panchkula Forest Division",
+        "division": "Panchkula Forest Division",
+        "area_ha": 3860
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [76.861, 30.833],
+            [77.007, 30.835],
+            [77.035, 30.748],
+            [76.938, 30.688],
+            [76.838, 30.734],
+            [76.861, 30.833]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Yamunanagar Range",
+        "division": "Yamunanagar Forest Circle",
+        "area_ha": 4400
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.15, 30.426],
+            [77.356, 30.383],
+            [77.412, 30.204],
+            [77.318, 30.033],
+            [77.162, 30.086],
+            [77.112, 30.255],
+            [77.15, 30.426]
+          ]
+        ]
+      }
+    }
+  ]
+}
