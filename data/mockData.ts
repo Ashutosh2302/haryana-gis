@@ -87,6 +87,30 @@ function getVillageSurveyDate(index: number) {
   return `2026-03-${String(index + 3).padStart(2, "0")}`;
 }
 
+function getForestPillarStatus(index: number): PillarStatus {
+  if (index < 30) {
+    return "Verified";
+  }
+
+  if (index < 36) {
+    return "Pending";
+  }
+
+  return "Disputed";
+}
+
+function getVillagePillarStatus(index: number): PillarStatus {
+  if (index < 4) {
+    return "Verified";
+  }
+
+  if (index < 6) {
+    return "Pending";
+  }
+
+  return "Disputed";
+}
+
 export const pillarsCollection: PillarFeatureCollection = {
   type: "FeatureCollection",
   features: [
@@ -98,7 +122,7 @@ export const pillarsCollection: PillarFeatureCollection = {
         district: "Panchkula",
         survey_date: getMorniSurveyDate(index),
         survey_no: `MOR/2026/${String(index + 1).padStart(3, "0")}`,
-        status: "Verified" as PillarStatus,
+        status: getForestPillarStatus(index),
         image_url: "/pillar-placeholder.svg",
       },
       geometry: { type: "Point" as const, coordinates },
@@ -111,7 +135,7 @@ export const pillarsCollection: PillarFeatureCollection = {
         district: "Yamunanagar",
         survey_date: "2026-03-22",
         survey_no: "SAD/2026/041",
-        status: "Verified",
+        status: "Pending",
         image_url: "/pillar-placeholder.svg",
       },
       geometry: { type: "Point", coordinates: [77.15, 30.426] },
@@ -137,7 +161,7 @@ export const pillarsCollection: PillarFeatureCollection = {
         district: "Yamunanagar",
         survey_date: "2026-03-24",
         survey_no: "BIL/2026/043",
-        status: "Verified",
+        status: "Disputed",
         image_url: "/pillar-placeholder.svg",
       },
       geometry: { type: "Point", coordinates: [77.412, 30.204] },
@@ -150,7 +174,7 @@ export const pillarsCollection: PillarFeatureCollection = {
         district: "Yamunanagar",
         survey_date: "2026-03-25",
         survey_no: "BIL/2026/044",
-        status: "Verified",
+        status: "Pending",
         image_url: "/pillar-placeholder.svg",
       },
       geometry: { type: "Point", coordinates: [77.318, 30.033] },
@@ -176,7 +200,7 @@ export const pillarsCollection: PillarFeatureCollection = {
         district: "Yamunanagar",
         survey_date: "2026-03-27",
         survey_no: "SAD/2026/046",
-        status: "Verified",
+        status: "Disputed",
         image_url: "/pillar-placeholder.svg",
       },
       geometry: { type: "Point", coordinates: [77.112, 30.255] },
@@ -307,7 +331,7 @@ export const villagePillarsCollection: VillagePillarFeatureCollection = {
         district: "Panchkula",
         survey_date: getVillageSurveyDate(Math.floor(index / 2)),
         survey_no: `MOR-VLG/2026/${String(index + 1).padStart(3, "0")}`,
-        status: "Verified" as PillarStatus,
+        status: getVillagePillarStatus(index),
         image_url: "/pillar-placeholder.svg",
         boundary_type: "Village Boundary Pillar" as const,
       },
@@ -321,7 +345,7 @@ export const villagePillarsCollection: VillagePillarFeatureCollection = {
         district: "Panchkula",
         survey_date: getVillageSurveyDate(2 + Math.floor(index / 2)),
         survey_no: `BHK/2026/${String(index + 1).padStart(3, "0")}`,
-        status: "Verified" as PillarStatus,
+        status: getVillagePillarStatus(index + 4),
         image_url: "/pillar-placeholder.svg",
         boundary_type: "Village Boundary Pillar" as const,
       },

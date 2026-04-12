@@ -72,6 +72,12 @@ const surveyLayers: {
     caption: "Parcel corner markers",
     icon: MapPinned,
   },
+  {
+    id: "admin",
+    label: "Administrative Boundary",
+    caption: "District reference extent",
+    icon: Layers3,
+  },
 ];
 
 function SectionLabel({

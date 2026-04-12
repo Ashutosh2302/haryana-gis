@@ -22,9 +22,7 @@ import {
   useMap,
 } from "react-leaflet";
 
-import MapSelectionDrawer, {
-  type MapSelection,
-} from "@/components/MapSelectionDrawer";
+import MapSelectionDrawer from "@/components/MapSelectionDrawer";
 import {
   adminCollection,
   forestCollection,
@@ -36,6 +34,7 @@ import type {
   BasemapId,
   ForestProperties,
   LayerVisibility,
+  MapSelection,
   PillarProperties,
   PillarFeatureCollection,
   PillarStatus,
@@ -771,7 +770,7 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
         }
       },
     }),
-    [basemap],
+    [basemap, selection],
   );
 
   return (

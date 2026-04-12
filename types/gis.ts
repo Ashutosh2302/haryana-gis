@@ -81,3 +81,25 @@ export interface VillagePillarFeatureCollection {
   type: "FeatureCollection";
   features: VillagePillarFeature[];
 }
+
+export type MapSelection =
+  | {
+      kind: "forest";
+      forest: ForestProperties;
+      perimeterKm: number;
+      boundaryPillars: number;
+    }
+  | {
+      kind: "village";
+      village: VillageProperties;
+      perimeterKm: number;
+      boundaryPillars: number;
+    }
+  | {
+      kind: "forestPillar";
+      pillar: PillarProperties;
+    }
+  | {
+      kind: "villagePillar";
+      pillar: VillagePillarProperties;
+    };
