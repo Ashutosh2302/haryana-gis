@@ -235,6 +235,7 @@ export default function MapPageContent() {
   const [layers, setLayers] = useState<LayerVisibility>(defaultLayers);
   const [query, setQuery] = useState("");
   const [capturing, setCapturing] = useState(false);
+  const [expandLegendForCapture, setExpandLegendForCapture] = useState(false);
   const [showCaptureModal, setShowCaptureModal] = useState(false);
   const [currentSelection, setCurrentSelection] = useState<MapSelection | null>(null);
   const selectionRef = useRef<MapSelection | null>(null);
@@ -264,6 +265,7 @@ export default function MapPageContent() {
     if (!pageRef.current) return;
 
     setCapturing(true);
+    setExpandLegendForCapture(true);
     try {
       await new Promise((resolve) => {
         window.setTimeout(resolve, 500);
@@ -333,6 +335,7 @@ export default function MapPageContent() {
           : "PDF export failed unexpectedly.",
       );
     } finally {
+      setExpandLegendForCapture(false);
       setCapturing(false);
     }
   };
@@ -481,6 +484,7 @@ export default function MapPageContent() {
             focusRequest={focusRequest}
             onFocusHandled={() => setFocusRequest(null)}
             onSelectionChange={handleSelectionChange}
+            legendForceExpanded={expandLegendForCapture}
           />
         </div>
       </section>

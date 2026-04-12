@@ -55,6 +55,8 @@ interface MapViewProps {
   } | null;
   onFocusHandled: () => void;
   onSelectionChange?: (selection: MapSelection | null) => void;
+  /** When true, legend stays expanded (e.g. during PDF/screenshot capture). */
+  legendForceExpanded?: boolean;
 }
 
 export interface MapViewHandle {
@@ -219,18 +221,19 @@ function createVillagePillarSelection(
 }
 
 function MapLegend({
-  basemap,
   layers,
+  forceExpanded = false,
 }: {
-  basemap: BasemapId;
   layers: LayerVisibility;
+  forceExpanded?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const isExpanded = forceExpanded || expanded;
 
   return (
     <div
       className={`absolute bottom-4 left-4 z-[700] rounded-[22px] ${
-        expanded ? "w-[210px] p-2.5" : "w-auto p-2"
+        isExpanded ? "w-[min(100vw-2rem,280px)] min-w-[260px] p-2.5" : "w-auto p-2"
       }`}
       style={{
         border: "1px solid rgba(255,255,255,0.75)",
@@ -240,43 +243,35 @@ function MapLegend({
     >
       <button
         type="button"
-        onClick={() => setExpanded((current) => !current)}
-        className={`flex w-full items-center justify-between gap-3 text-left transition hover:bg-slate-50 ${
-          expanded ? "rounded-[18px] px-2 py-1.5" : "rounded-[18px] px-3 py-2"
+        onClick={() => {
+          if (forceExpanded) return;
+          setExpanded((current) => !current);
+        }}
+        className={`flex w-full items-center justify-between gap-2 text-left transition hover:bg-slate-50 ${
+          isExpanded ? "rounded-[18px] px-2 py-1.5" : "rounded-[18px] px-3 py-2"
         }`}
-        aria-expanded={expanded}
-        aria-label={expanded ? "Collapse map legend" : "Expand map legend"}
+        aria-expanded={isExpanded}
+        aria-label={isExpanded ? "Collapse map legend" : "Expand map legend"}
       >
-        <div className="flex min-w-0 items-center gap-3">
-          {expanded ? (
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          {isExpanded ? (
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-600">
               <Layers3 className="h-4 w-4" />
             </span>
           ) : null}
-          <div className="min-w-0">
-            {expanded ? (
-              <>
-                <p
-                  className="text-[10px] font-semibold uppercase tracking-[0.22em]"
-                  style={{ color: "#64748b" }}
-                >
-                  Map Legend
-                </p>
-                <p
-                  className="mt-1 truncate text-sm font-semibold"
-                  style={{ color: "#020617" }}
-                >
-                  Basemap:{" "}
-                  {basemap === "street" ? "Street Map" : "Satellite Map"}
-                </p>
-              </>
-            ) : (
-              <p className="text-sm font-semibold text-slate-900">Map Legend</p>
-            )}
-          </div>
+          <p
+            className={`min-w-0 font-semibold text-slate-900 ${
+              isExpanded
+                ? "whitespace-nowrap text-[10px] uppercase tracking-[0.22em]"
+                : "text-sm"
+            }`}
+            style={isExpanded ? { color: "#64748b" } : undefined}
+          >
+            Map Legend
+          </p>
         </div>
         <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-          {expanded ? (
+          {isExpanded ? (
             <ChevronDown className="h-4 w-4" />
           ) : (
             <ChevronUp className="h-4 w-4" />
@@ -284,7 +279,7 @@ function MapLegend({
         </span>
       </button>
 
-      {expanded ? (
+      {isExpanded ? (
         <div
           className="mt-2 space-y-2.5 px-2 pb-1 text-sm"
           style={{ color: "#334155" }}
@@ -292,60 +287,60 @@ function MapLegend({
           {layers.forest && (
             <div className="flex items-center gap-3">
               <span
-                className="inline-block h-3.5 w-5 rounded-sm border-2"
+                className="inline-block h-3.5 w-5 shrink-0 rounded-sm border-2"
                 style={{
                   borderColor: "#166534",
                   background: "rgba(74, 222, 128, 0.5)",
                 }}
               />
-              <span>Forest Boundary</span>
+              <span className="whitespace-nowrap">Forest Boundary</span>
             </div>
           )}
           {layers.pillars && (
             <div className="flex items-center gap-3">
               <span
-                className="inline-block h-3.5 w-3.5 rounded-full border-2"
+                className="inline-block h-3.5 w-3.5 shrink-0 rounded-full border-2"
                 style={{
                   borderColor: "#166534",
                   background: "#4ade80",
                   boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
                 }}
               />
-              <span>Forest Pillar Point</span>
+              <span className="whitespace-nowrap">Forest Pillar Point</span>
             </div>
           )}
           {layers.villages && (
             <div className="flex items-center gap-3">
               <span
-                className="inline-block h-3.5 w-5 rounded-sm border-2"
+                className="inline-block h-3.5 w-5 shrink-0 rounded-sm border-2"
                 style={{
                   borderColor: "#b45309",
                   background: "rgba(251, 191, 36, 0.5)",
                 }}
               />
-              <span>Village Land Parcel</span>
+              <span className="whitespace-nowrap">Village Land Parcel</span>
             </div>
           )}
           {layers.villagePillars && (
             <div className="flex items-center gap-3">
               <span
-                className="inline-block h-3 w-3 rounded-full border-2"
+                className="inline-block h-3 w-3 shrink-0 rounded-full border-2"
                 style={{
                   borderColor: "#c2410c",
                   background: "#f97316",
                   boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
                 }}
               />
-              <span>Village Boundary Pillar</span>
+              <span className="whitespace-nowrap">Village Boundary Pillar</span>
             </div>
           )}
           {layers.admin && (
             <div className="flex items-center gap-3">
               <span
-                className="inline-block h-0.5 w-5 rounded-full"
+                className="inline-block h-0.5 w-5 shrink-0 rounded-full"
                 style={{ background: "rgba(29, 78, 216, 0.9)" }}
               />
-              <span>Administrative Boundary</span>
+              <span className="whitespace-nowrap">Administrative Boundary</span>
             </div>
           )}
         </div>
@@ -673,7 +668,14 @@ function isVillagePillarSelected(
 }
 
 const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
-  { basemap, layers, focusRequest, onFocusHandled, onSelectionChange }: MapViewProps,
+  {
+    basemap,
+    layers,
+    focusRequest,
+    onFocusHandled,
+    onSelectionChange,
+    legendForceExpanded,
+  }: MapViewProps,
   ref,
 ) {
   const villageLayerRefs = useRef<Record<string, L.Layer | null>>({});
@@ -1153,7 +1155,7 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
           )}
         </MapContainer>
 
-        <MapLegend basemap={basemap} layers={layers} />
+        <MapLegend layers={layers} forceExpanded={legendForceExpanded} />
       </div>
 
       <MapSelectionDrawer
