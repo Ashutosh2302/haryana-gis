@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
   LandPlot,
@@ -165,13 +166,23 @@ export default function Sidebar({
                     <Icon className="h-5 w-5" />
                   </div>
                   {!collapsed && (
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="truncate font-semibold">{option.label}</p>
                       <p className="truncate text-sm text-slate-400">
                         {option.caption}
                       </p>
                     </div>
                   )}
+                  <span
+                    className={`ml-auto inline-flex h-6 w-6 shrink-0 self-center items-center justify-center rounded-md border transition ${
+                      active
+                        ? "border-emerald-300 bg-emerald-300 text-slate-950"
+                        : "border-slate-600 bg-slate-900 text-transparent"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
                 </button>
               );
             })}
@@ -225,6 +236,16 @@ export default function Sidebar({
                       </p>
                     </div>
                   )}
+                  <span
+                    className={`ml-auto inline-flex h-6 w-6 shrink-0 self-center items-center justify-center rounded-md border transition ${
+                      active
+                        ? "border-sky-300 bg-sky-300 text-slate-950"
+                        : "border-slate-600 bg-slate-900 text-transparent"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
                 </button>
               );
             })}

@@ -88,18 +88,34 @@ export type MapSelection =
       forest: ForestProperties;
       perimeterKm: number;
       boundaryPillars: number;
+      coordinates: {
+        lat: number;
+        lng: number;
+      };
     }
   | {
       kind: "village";
       village: VillageProperties;
       perimeterKm: number;
       boundaryPillars: number;
+      coordinates: {
+        lat: number;
+        lng: number;
+      };
     }
   | {
       kind: "forestPillar";
       pillar: PillarProperties;
+      coordinates: {
+        lat: number;
+        lng: number;
+      };
     }
   | {
       kind: "villagePillar";
       pillar: VillagePillarProperties;
+      coordinates: {
+        lat: number;
+        lng: number;
+      };
     };

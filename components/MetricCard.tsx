@@ -10,6 +10,7 @@ interface MetricCardProps {
   value: string;
   helper: string;
   tone: AnalyticsTone;
+  compact?: boolean;
 }
 
 const toneClasses: Record<
@@ -44,30 +45,50 @@ export default function MetricCard({
   value,
   helper,
   tone,
+  compact = false,
 }: MetricCardProps) {
   const palette = toneClasses[tone];
 
   return (
-    <div className="group relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white px-4 py-4 shadow-[0_22px_50px_-38px_rgba(15,23,42,0.4)] transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_30px_60px_-36px_rgba(15,23,42,0.38)]">
+    <div
+      className={`group relative overflow-hidden border border-slate-200/80 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_30px_60px_-36px_rgba(15,23,42,0.38)] ${
+        compact
+          ? "rounded-[20px] px-3.5 py-3 shadow-[0_18px_40px_-36px_rgba(15,23,42,0.34)]"
+          : "rounded-[24px] px-4 py-4 shadow-[0_22px_50px_-38px_rgba(15,23,42,0.4)]"
+      }`}
+    >
       <div
-        className={`pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b ${palette.glow}`}
+        className={`pointer-events-none absolute inset-x-0 top-0 ${compact ? "h-14" : "h-20"} bg-gradient-to-b ${palette.glow}`}
       />
       <div className="relative flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
             {label}
           </p>
-          <p className="mt-3 text-[1.7rem] font-semibold tracking-tight text-slate-950">
+          <p
+            className={`font-semibold tracking-tight text-slate-950 ${
+              compact ? "mt-2 text-[1.15rem]" : "mt-3 text-[1.7rem]"
+            }`}
+          >
             {value}
           </p>
-          <p className="mt-2 max-w-[18rem] text-xs leading-5 text-slate-500">
+          <p
+            className={`max-w-[18rem] text-xs text-slate-500 ${
+              compact ? "mt-1.5 leading-5" : "mt-2 leading-5"
+            }`}
+          >
             {helper}
           </p>
         </div>
         <span
-          className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${palette.iconWrap}`}
+          className={`inline-flex shrink-0 items-center justify-center ${palette.iconWrap} ${
+            compact ? "h-10 w-10 rounded-[18px]" : "h-11 w-11 rounded-2xl"
+          }`}
         >
-          <Icon className={`h-5 w-5 ${palette.icon}`} strokeWidth={2} />
+          <Icon
+            className={`${compact ? "h-4.5 w-4.5" : "h-5 w-5"} ${palette.icon}`}
+            strokeWidth={2}
+          />
         </span>
       </div>
     </div>

@@ -12,6 +12,7 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import L from "leaflet";
 import "leaflet-draw";
+import { ChevronDown, ChevronUp, Layers3 } from "lucide-react";
 import {
   GeoJSON,
   MapContainer,
@@ -150,6 +151,8 @@ function createForestSelection(
   forest: ForestProperties,
   polygonCoordinates: [number, number][],
 ): MapSelection {
+  const coordinates = getPolygonCenter(polygonCoordinates);
+
   return {
     kind: "forest",
     forest,
@@ -158,6 +161,7 @@ function createForestSelection(
       polygonCoordinates,
       pillarsCollection.features,
     ),
+    coordinates,
   };
 }
 
@@ -165,6 +169,8 @@ function createVillageSelection(
   village: VillageProperties,
   polygonCoordinates: [number, number][],
 ): MapSelection {
+  const coordinates = getPolygonCenter(polygonCoordinates);
+
   return {
     kind: "village",
     village,
@@ -173,22 +179,39 @@ function createVillageSelection(
       polygonCoordinates,
       villagePillarsCollection.features,
     ),
+    coordinates,
   };
 }
 
-function createForestPillarSelection(pillar: PillarProperties): MapSelection {
+function createForestPillarSelection(
+  pillar: PillarProperties,
+  coordinates: [number, number],
+): MapSelection {
+  const [lng, lat] = coordinates;
+
   return {
     kind: "forestPillar",
     pillar,
+    coordinates: {
+      lat,
+      lng,
+    },
   };
 }
 
 function createVillagePillarSelection(
   pillar: VillagePillarProperties,
+  coordinates: [number, number],
 ): MapSelection {
+  const [lng, lat] = coordinates;
+
   return {
     kind: "villagePillar",
     pillar,
+    coordinates: {
+      lat,
+      lng,
+    },
   };
 }
 
@@ -199,86 +222,123 @@ function MapLegend({
   basemap: BasemapId;
   layers: LayerVisibility;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <div
-      className="pointer-events-none absolute bottom-4 left-4 z-[700] w-[240px] rounded-[24px] p-4"
+      className={`absolute bottom-4 left-4 z-[700] rounded-[22px] ${
+        expanded ? "w-[210px] p-2.5" : "w-auto p-2"
+      }`}
       style={{
         border: "1px solid rgba(255,255,255,0.75)",
         background: "rgba(255,255,255,0.96)",
-        boxShadow: "0 24px 60px -36px rgba(15,23,42,0.45)",
+        boxShadow: "0 20px 50px -36px rgba(15,23,42,0.45)",
       }}
     >
-      <p
-        className="text-[11px] font-semibold uppercase tracking-[0.22em]"
-        style={{ color: "#64748b" }}
+      <button
+        type="button"
+        onClick={() => setExpanded((current) => !current)}
+        className={`flex w-full items-center justify-between gap-3 text-left transition hover:bg-slate-50 ${
+          expanded ? "rounded-[18px] px-2 py-1.5" : "rounded-[18px] px-3 py-2"
+        }`}
+        aria-expanded={expanded}
+        aria-label={expanded ? "Collapse map legend" : "Expand map legend"}
       >
-        Map Legend
-      </p>
-      <p className="mt-1 text-sm font-semibold" style={{ color: "#020617" }}>
-        Basemap: {basemap === "street" ? "Street Map" : "Satellite Map"}
-      </p>
+        <div className="flex min-w-0 items-center gap-3">
+          {expanded ? (
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-600">
+              <Layers3 className="h-4 w-4" />
+            </span>
+          ) : null}
+          <div className="min-w-0">
+            {expanded ? (
+              <>
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-[0.22em]"
+                  style={{ color: "#64748b" }}
+                >
+                  Map Legend
+                </p>
+                <p
+                  className="mt-1 truncate text-sm font-semibold"
+                  style={{ color: "#020617" }}
+                >
+                  Basemap: {basemap === "street" ? "Street Map" : "Satellite Map"}
+                </p>
+              </>
+            ) : (
+              <p className="text-sm font-semibold text-slate-900">Map Legend</p>
+            )}
+          </div>
+        </div>
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+          {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        </span>
+      </button>
 
-      <div className="mt-3 space-y-2.5 text-sm" style={{ color: "#334155" }}>
-        {layers.forest && (
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-block h-3.5 w-5 rounded-sm border-2"
-              style={{
-                borderColor: "#166534",
-                background: "rgba(74, 222, 128, 0.5)",
-              }}
-            />
-            <span>Forest Boundary</span>
-          </div>
-        )}
-        {layers.pillars && (
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-block h-3.5 w-3.5 rounded-full border-2"
-              style={{
-                borderColor: "#166534",
-                background: "#4ade80",
-                boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
-              }}
-            />
-            <span>Forest Pillar Point</span>
-          </div>
-        )}
-        {layers.villages && (
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-block h-3.5 w-5 rounded-sm border-2"
-              style={{
-                borderColor: "#b45309",
-                background: "rgba(251, 191, 36, 0.5)",
-              }}
-            />
-            <span>Village Land Parcel</span>
-          </div>
-        )}
-        {layers.villagePillars && (
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-block h-3 w-3 rounded-full border-2"
-              style={{
-                borderColor: "#c2410c",
-                background: "#f97316",
-                boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
-              }}
-            />
-            <span>Village Boundary Pillar</span>
-          </div>
-        )}
-        {layers.admin && (
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-block h-0.5 w-5 rounded-full"
-              style={{ background: "rgba(29, 78, 216, 0.9)" }}
-            />
-            <span>Administrative Boundary</span>
-          </div>
-        )}
-      </div>
+      {expanded ? (
+        <div className="mt-2 space-y-2.5 px-2 pb-1 text-sm" style={{ color: "#334155" }}>
+          {layers.forest && (
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-3.5 w-5 rounded-sm border-2"
+                style={{
+                  borderColor: "#166534",
+                  background: "rgba(74, 222, 128, 0.5)",
+                }}
+              />
+              <span>Forest Boundary</span>
+            </div>
+          )}
+          {layers.pillars && (
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-3.5 w-3.5 rounded-full border-2"
+                style={{
+                  borderColor: "#166534",
+                  background: "#4ade80",
+                  boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
+                }}
+              />
+              <span>Forest Pillar Point</span>
+            </div>
+          )}
+          {layers.villages && (
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-3.5 w-5 rounded-sm border-2"
+                style={{
+                  borderColor: "#b45309",
+                  background: "rgba(251, 191, 36, 0.5)",
+                }}
+              />
+              <span>Village Land Parcel</span>
+            </div>
+          )}
+          {layers.villagePillars && (
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-3 w-3 rounded-full border-2"
+                style={{
+                  borderColor: "#c2410c",
+                  background: "#f97316",
+                  boxShadow: "0 0 0 3px rgba(255,255,255,0.9)",
+                }}
+              />
+              <span>Village Boundary Pillar</span>
+            </div>
+          )}
+          {layers.admin && (
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block h-0.5 w-5 rounded-full"
+                style={{ background: "rgba(29, 78, 216, 0.9)" }}
+              />
+              <span>Administrative Boundary</span>
+            </div>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -420,7 +480,9 @@ function FocusController({
         animate: true,
         duration: 1,
       });
-      onSelectionChange(createVillagePillarSelection(target.properties));
+      onSelectionChange(
+        createVillagePillarSelection(target.properties, target.geometry.coordinates),
+      );
       onFocusHandled();
       return;
     }
@@ -439,7 +501,9 @@ function FocusController({
       animate: true,
       duration: 1,
     });
-    onSelectionChange(createForestPillarSelection(target.properties));
+    onSelectionChange(
+      createForestPillarSelection(target.properties, target.geometry.coordinates),
+    );
 
     onFocusHandled();
   }, [
@@ -512,6 +576,24 @@ function getPolygonPerimeterKm(coordinates: [number, number][]) {
 
 function getCoordinateKey([lng, lat]: [number, number]) {
   return `${lng.toFixed(6)},${lat.toFixed(6)}`;
+}
+
+function getPolygonCenter(coordinates: [number, number][]) {
+  const vertices = coordinates.slice(0, -1);
+  const total = vertices.length || 1;
+
+  const sums = vertices.reduce(
+    (accumulator, [lng, lat]) => ({
+      lng: accumulator.lng + lng,
+      lat: accumulator.lat + lat,
+    }),
+    { lng: 0, lat: 0 },
+  );
+
+  return {
+    lat: sums.lat / total,
+    lng: sums.lng / total,
+  };
 }
 
 function getBoundaryPillarCount(
@@ -949,7 +1031,9 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
                     riseOnHover
                     eventHandlers={{
                       click: () => {
-                        setSelection(createForestPillarSelection(pillar));
+                        setSelection(
+                          createForestPillarSelection(pillar, feature.geometry.coordinates),
+                        );
                       },
                     }}
                   />
@@ -976,7 +1060,12 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
                     riseOnHover
                     eventHandlers={{
                       click: () => {
-                        setSelection(createVillagePillarSelection(pillar));
+                        setSelection(
+                          createVillagePillarSelection(
+                            pillar,
+                            feature.geometry.coordinates,
+                          ),
+                        );
                       },
                     }}
                   />

@@ -13,10 +13,20 @@ import type { SurveyStatusDatum } from "@/data/analyticsMock";
 
 interface AnalyticsPieChartProps {
   data: SurveyStatusDatum[];
+  eyebrow?: string;
+  title?: string;
+  badge?: string;
+  centerLabel?: string;
+  tooltipSuffix?: string;
 }
 
 export default function AnalyticsPieChart({
   data,
+  eyebrow = "Survey Status",
+  title = "Verification distribution",
+  badge,
+  centerLabel = "Total",
+  tooltipSuffix = "pillars",
 }: AnalyticsPieChartProps) {
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
@@ -25,14 +35,14 @@ export default function AnalyticsPieChart({
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-            Survey Status
+            {eyebrow}
           </p>
           <h3 className="mt-2 text-base font-semibold tracking-tight text-slate-950">
-            Verification distribution
+            {title}
           </h3>
         </div>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-          {total} pillars
+          {badge ?? `${total} ${tooltipSuffix}`}
         </span>
       </div>
 
@@ -65,7 +75,7 @@ export default function AnalyticsPieChart({
                       dy="1.6em"
                       className="fill-slate-500 text-[11px] uppercase tracking-[0.22em]"
                     >
-                      Total
+                      {centerLabel}
                     </tspan>
                   </text>
                 )}
@@ -88,7 +98,7 @@ export default function AnalyticsPieChart({
                   <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-xl">
                     <p className="text-sm font-semibold text-slate-950">{datum.name}</p>
                     <p className="mt-1 text-xs text-slate-500">
-                      {datum.value} pillars • {share}% share
+                      {datum.value} {tooltipSuffix} • {share}% share
                     </p>
                   </div>
                 );
