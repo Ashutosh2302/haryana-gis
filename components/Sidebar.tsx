@@ -167,10 +167,10 @@ export default function Sidebar({
                   </div>
                   {!collapsed && (
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold md:text-base">
+                      <p className="hyphens-auto break-words text-[0.8125rem] font-semibold leading-snug md:text-sm">
                         {option.label}
                       </p>
-                      <p className="truncate text-xs text-slate-400 md:text-sm">
+                      <p className="mt-0.5 hyphens-auto break-words text-xs leading-snug text-slate-400 md:text-sm">
                         {option.caption}
                       </p>
                     </div>
@@ -220,22 +220,11 @@ export default function Sidebar({
                     <Icon className="h-[1.15rem] w-[1.15rem] md:h-5 md:w-5" />
                   </div>
                   {!collapsed && (
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-2 md:gap-3">
-                        <p className="truncate text-sm font-semibold md:text-base">
-                          {layer.label}
-                        </p>
-                        <span
-                          className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
-                            active
-                              ? "bg-sky-300/15 text-sky-200"
-                              : "bg-slate-800 text-slate-400"
-                          }`}
-                        >
-                          {active ? "Visible" : "Hidden"}
-                        </span>
-                      </div>
-                      <p className="truncate text-xs text-slate-400 md:text-sm">
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <p className="hyphens-auto break-words text-[0.8125rem] font-semibold leading-snug [overflow-wrap:anywhere] md:text-sm">
+                        {layer.label}
+                      </p>
+                      <p className="hyphens-auto break-words text-xs leading-snug text-slate-400 [overflow-wrap:anywhere] md:text-sm">
                         {layer.caption}
                       </p>
                     </div>
