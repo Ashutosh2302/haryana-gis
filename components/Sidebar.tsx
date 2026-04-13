@@ -149,7 +149,7 @@ export default function Sidebar({
                   key={option.id}
                   type="button"
                   onClick={() => onBasemapChange(option.id)}
-                  className={`group flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
+                  className={`group flex w-full cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
                     active
                       ? "border-emerald-500/40 bg-emerald-500/10 text-white shadow-[inset_0_0_0_1px_rgba(16,185,129,0.15)]"
                       : "border-slate-800 bg-slate-900/80 text-slate-300 hover:border-slate-700 hover:bg-slate-900 hover:text-white"
@@ -203,7 +203,7 @@ export default function Sidebar({
                   key={layer.id}
                   type="button"
                   onClick={() => onLayerToggle(layer.id)}
-                  className={`group flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
+                  className={`group flex w-full cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
                     active
                       ? "border-sky-400/35 bg-sky-400/10 text-white"
                       : "border-slate-800 bg-slate-900/70 text-slate-300 hover:border-slate-700 hover:bg-slate-900 hover:text-white"
