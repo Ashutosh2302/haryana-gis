@@ -127,84 +127,6 @@ export const pillarsCollection: PillarFeatureCollection = {
       },
       geometry: { type: "Point" as const, coordinates },
     })),
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-041",
-        village: "Sadhaura",
-        district: "Yamunanagar",
-        survey_date: "2026-03-22",
-        survey_no: "SAD/2026/041",
-        status: "Pending",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.15, 30.426] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-042",
-        village: "Jagadhri",
-        district: "Yamunanagar",
-        survey_date: "2026-03-23",
-        survey_no: "JAG/2026/042",
-        status: "Verified",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.356, 30.383] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-043",
-        village: "Bilaspur",
-        district: "Yamunanagar",
-        survey_date: "2026-03-24",
-        survey_no: "BIL/2026/043",
-        status: "Disputed",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.412, 30.204] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-044",
-        village: "Bilaspur",
-        district: "Yamunanagar",
-        survey_date: "2026-03-25",
-        survey_no: "BIL/2026/044",
-        status: "Pending",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.318, 30.033] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-045",
-        village: "Jagadhri",
-        district: "Yamunanagar",
-        survey_date: "2026-03-26",
-        survey_no: "JAG/2026/045",
-        status: "Verified",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.162, 30.086] },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "HR-PILLAR-046",
-        village: "Sadhaura",
-        district: "Yamunanagar",
-        survey_date: "2026-03-27",
-        survey_no: "SAD/2026/046",
-        status: "Disputed",
-        image_url: "/pillar.jpeg",
-      },
-      geometry: { type: "Point", coordinates: [77.112, 30.255] },
-    },
   ],
 };
 
@@ -245,29 +167,6 @@ export const forestCollection: FeatureCollection = {
     //     ],
     //   },
     // },
-    {
-      type: "Feature",
-      properties: {
-        name: "Yamunanagar Range",
-        division: "Yamunanagar Forest Circle",
-        area_ha: 4400,
-        image_url: "/forest.jpeg",
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [
-          [
-            [77.15, 30.426],
-            [77.356, 30.383],
-            [77.412, 30.204],
-            [77.318, 30.033],
-            [77.162, 30.086],
-            [77.112, 30.255],
-            [77.15, 30.426],
-          ],
-        ],
-      },
-    },
   ],
 };
 

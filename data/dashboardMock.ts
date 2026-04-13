@@ -67,7 +67,6 @@ export const stateSurveyStatus: SurveyStatusDatum[] = [
 
 export const pillarsByDistrict: DistrictBarDatum[] = [
   { name: "Panchkula", pillars: 420 },
-  { name: "Yamunanagar", pillars: 365 },
   { name: "Ambala", pillars: 295 },
   { name: "Kurukshetra", pillars: 160 },
 ];
@@ -88,13 +87,6 @@ export const districtBreakdown: DistrictTableRow[] = [
     totalPillars: 420,
     verified: 310,
     pending: 72,
-  },
-  {
-    district: "Yamunanagar",
-    forestAreaHa: 3760,
-    totalPillars: 365,
-    verified: 252,
-    pending: 81,
   },
   {
     district: "Ambala",

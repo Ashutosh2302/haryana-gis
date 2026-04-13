@@ -43,28 +43,6 @@
           ]
         ]
       }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "name": "Yamunanagar Range",
-        "division": "Yamunanagar Forest Circle",
-        "area_ha": 4400
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [77.15, 30.426],
-            [77.356, 30.383],
-            [77.412, 30.204],
-            [77.318, 30.033],
-            [77.162, 30.086],
-            [77.112, 30.255],
-            [77.15, 30.426]
-          ]
-        ]
-      }
     }
   ]
 }

@@ -47,7 +47,7 @@ export default function CanvasDashboardContent() {
                   Review Focus
                 </p>
                 <p className="mt-2 text-base font-semibold text-slate-950">
-                  Panchkula and Yamunanagar are leading current field verification output.
+                  Panchkula is leading current field verification output.
                 </p>
                 <p className="mt-2 text-sm text-slate-600">
                   Pending load remains concentrated in Ambala and Kurukshetra dispute review.

@@ -118,108 +118,6 @@ const analyticsProfiles: Record<string, AnalyticsProfile> = {
       { label: "Data Confidence", value: "Moderate field validation" },
     ],
   },
-  yamunanagar: {
-    totalPillars: 31,
-    verified: 21,
-    pending: 7,
-    disputed: 3,
-    forestAreaHa: 2140,
-    villagesCovered: 4,
-    pillarsByVillage: [
-      { name: "Sadhaura", pillars: 18 },
-      { name: "Jagadhri", pillars: 20 },
-      { name: "Bilaspur", pillars: 16 },
-      { name: "Chhachhrauli", pillars: 13 },
-    ],
-    timeline: [
-      { month: "Jan", completed: 6 },
-      { month: "Feb", completed: 11 },
-      { month: "Mar", completed: 17 },
-      { month: "Apr", completed: 21 },
-    ],
-    infoRows: [
-      { label: "Range Office", value: "Yamunanagar Forest Circle" },
-      { label: "Jurisdiction", value: "Yamunanagar District" },
-      { label: "Last Joint Inspection", value: "06 Apr 2026" },
-      { label: "Data Confidence", value: "Targeted dispute review active" },
-    ],
-  },
-  sadhaura: {
-    totalPillars: 18,
-    verified: 12,
-    pending: 4,
-    disputed: 2,
-    forestAreaHa: 970,
-    villagesCovered: 3,
-    pillarsByVillage: [
-      { name: "Sadhaura", pillars: 18 },
-      { name: "Chhachhrauli", pillars: 12 },
-      { name: "Mustafabad", pillars: 10 },
-    ],
-    timeline: [
-      { month: "Jan", completed: 4 },
-      { month: "Feb", completed: 7 },
-      { month: "Mar", completed: 10 },
-      { month: "Apr", completed: 12 },
-    ],
-    infoRows: [
-      { label: "Range Office", value: "Sadhaura Beat" },
-      { label: "Jurisdiction", value: "Yamunanagar District" },
-      { label: "Last Joint Inspection", value: "31 Mar 2026" },
-      { label: "Data Confidence", value: "Dispute review scheduled" },
-    ],
-  },
-  jagadhri: {
-    totalPillars: 20,
-    verified: 15,
-    pending: 3,
-    disputed: 2,
-    forestAreaHa: 1110,
-    villagesCovered: 4,
-    pillarsByVillage: [
-      { name: "Jagadhri", pillars: 20 },
-      { name: "Bilaspur", pillars: 14 },
-      { name: "Sadhaura", pillars: 11 },
-      { name: "Radaur", pillars: 9 },
-    ],
-    timeline: [
-      { month: "Jan", completed: 5 },
-      { month: "Feb", completed: 9 },
-      { month: "Mar", completed: 12 },
-      { month: "Apr", completed: 15 },
-    ],
-    infoRows: [
-      { label: "Range Office", value: "Jagadhri Survey Unit" },
-      { label: "Jurisdiction", value: "Yamunanagar District" },
-      { label: "Last Joint Inspection", value: "02 Apr 2026" },
-      { label: "Data Confidence", value: "High alignment with record map" },
-    ],
-  },
-  bilaspur: {
-    totalPillars: 16,
-    verified: 10,
-    pending: 4,
-    disputed: 2,
-    forestAreaHa: 890,
-    villagesCovered: 2,
-    pillarsByVillage: [
-      { name: "Bilaspur", pillars: 16 },
-      { name: "Jagadhri", pillars: 12 },
-      { name: "Sadhaura", pillars: 8 },
-    ],
-    timeline: [
-      { month: "Jan", completed: 3 },
-      { month: "Feb", completed: 6 },
-      { month: "Mar", completed: 8 },
-      { month: "Apr", completed: 10 },
-    ],
-    infoRows: [
-      { label: "Range Office", value: "Bilaspur Survey Unit" },
-      { label: "Jurisdiction", value: "Yamunanagar District" },
-      { label: "Last Joint Inspection", value: "29 Mar 2026" },
-      { label: "Data Confidence", value: "Partial pending ground-truthing" },
-    ],
-  },
 };
 
 function formatNumber(value: number) {
@@ -246,9 +144,6 @@ function getProfileKey(selection: MapSelection) {
       if (selection.forest.name.includes("Morni")) {
         return "morni";
       }
-      if (selection.forest.name.includes("Yamunanagar")) {
-        return "yamunanagar";
-      }
       return "morni";
     case "village":
       if (selection.village.name.includes("Bhoj Koti")) {
@@ -263,19 +158,10 @@ function getProfileKey(selection: MapSelection) {
       if (selection.pillar.village.includes("Bhoj Koti")) {
         return "bhojKoti";
       }
-      if (selection.pillar.village.includes("Sadhaura")) {
-        return "sadhaura";
-      }
-      if (selection.pillar.village.includes("Jagadhri")) {
-        return "jagadhri";
-      }
-      if (selection.pillar.village.includes("Bilaspur")) {
-        return "bilaspur";
-      }
       if (selection.pillar.village.includes("Morni")) {
         return "morni";
       }
-      return "yamunanagar";
+      return "morni";
   }
 }
 
