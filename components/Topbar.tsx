@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { useRef } from "react";
+import { Search } from "lucide-react";
 
 import PortalNavigation from "@/components/PortalNavigation";
 
@@ -10,6 +10,8 @@ interface TopbarProps {
   searchMessage: string;
   onQueryChange: (query: string) => void;
   onSearch: () => void;
+  /** When the map detail panel is open, use a narrower search strip so the bar stays clear of it. */
+  detailPanelOpen?: boolean;
 }
 
 export default function Topbar({
@@ -17,64 +19,63 @@ export default function Topbar({
   searchMessage,
   onQueryChange,
   onSearch,
+  detailPanelOpen = false,
 }: TopbarProps) {
-  const [expanded, setExpanded] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  /* Fixed width so the field doesn’t balloon or collapse; narrower when detail panel is open. */
+  const searchWidthClass = detailPanelOpen
+    ? "w-[11.5rem] sm:w-[12.5rem]"
+    : "w-[12.5rem] sm:w-[14rem] md:w-[15rem]";
+
+  const handleSearchStripClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest("button")) {
+      return;
+    }
+    inputRef.current?.focus();
+  };
 
   return (
-    <div className="pointer-events-auto w-full max-w-[560px] rounded-[24px] border border-white/70 bg-white/92 p-2.5 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.42)] backdrop-blur md:max-w-[620px]">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+    <div className="pointer-events-auto w-fit max-w-full rounded-[1.5rem] border border-white/70 bg-white/92 p-1.5 shadow-[0_20px_50px_-34px_rgba(15,23,42,0.42)] backdrop-blur md:p-2">
+      <div
+        className="flex min-w-0 flex-nowrap items-stretch gap-1.5 md:gap-2"
+        title={searchMessage}
+      >
+        <div className="shrink-0">
           <PortalNavigation />
+        </div>
+        <div
+          role="search"
+          className={`flex min-h-10 shrink-0 cursor-text items-center gap-1 rounded-[1.25rem] border border-slate-200 bg-slate-50/95 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] md:min-h-11 md:gap-1.5 md:p-1.5 ${searchWidthClass}`}
+          onClick={handleSearchStripClick}
+        >
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                onSearch();
+              }
+            }}
+            placeholder="Village, pillar ID…"
+            className="h-9 min-w-0 w-0 flex-1 cursor-text bg-transparent pl-1.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 md:h-10 md:pl-2"
+            aria-label="Search map features"
+            aria-describedby="topbar-search-hint"
+          />
           <button
             type="button"
-            onClick={() => setExpanded((current) => !current)}
-            className="inline-flex h-11 items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-white hover:text-slate-950"
-            aria-expanded={expanded}
-            aria-label={
-              expanded ? "Collapse search panel" : "Expand search panel"
-            }
+            onClick={() => onSearch()}
+            className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-xl border border-slate-200/80 bg-white text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950 md:h-9 md:w-9 md:rounded-2xl"
+            aria-label="Run search"
           >
-            <Search className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {expanded ? "Hide Search" : "Search"}
-            </span>
-            {expanded ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
+            <Search className="h-4 w-4" aria-hidden />
           </button>
         </div>
       </div>
-
-      {expanded ? (
-        <>
-          <div className="mt-3 flex items-center gap-2 rounded-[20px] border border-slate-200 bg-slate-50/95 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white text-slate-500 shadow-sm">
-              <Search className="h-4 w-4" />
-            </div>
-            <input
-              value={query}
-              onChange={(event) => onQueryChange(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  onSearch();
-                }
-              }}
-              placeholder="Search by Village / Pillar ID / Survey No"
-              className="h-11 w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
-            />
-            <button
-              type="button"
-              onClick={onSearch}
-              className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-            >
-              Search
-            </button>
-          </div>
-          <p className="mt-2 px-1 text-xs text-slate-500">{searchMessage}</p>
-        </>
-      ) : null}
+      <p id="topbar-search-hint" className="sr-only">
+        {searchMessage}
+      </p>
     </div>
   );
 }

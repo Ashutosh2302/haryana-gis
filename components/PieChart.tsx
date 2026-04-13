@@ -108,7 +108,7 @@ export default function AnalyticsPieChart({
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <div className="mt-2 grid grid-cols-1 gap-2 min-[480px]:grid-cols-3">
         {data.map((item) => {
           const share = total ? Math.round((item.value / total) * 100) : 0;
 

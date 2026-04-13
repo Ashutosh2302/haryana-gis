@@ -10,6 +10,13 @@ body {
   height: 100%;
 }
 
+/* Denser rem baseline: Tailwind spacing/type use rem and shrink with this.
+   Layout chrome max-widths use rem too (not raw px) so sidebars/top bar scale together.
+   ~87.5% offsets common Windows-100% vs Mac reference density. */
+html {
+  font-size: 87.5%;
+}
+
 * {
   box-sizing: border-box;
 }

@@ -21,7 +21,7 @@ export default function DashboardMetricsGrid({
   metrics,
 }: DashboardMetricsGridProps) {
   return (
-    <section className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <section className="mt-6 grid grid-cols-1 gap-x-3 gap-y-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 lg:gap-x-4 lg:gap-y-4">
       {metrics.map((metric, index) => {
         const Icon = metricIcons[index];
 

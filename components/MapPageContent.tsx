@@ -465,7 +465,7 @@ export default function MapPageContent() {
             data-capture-ignore=""
             className={`pointer-events-none absolute left-20 top-3 z-[900] flex items-start justify-start gap-2 md:left-24 md:top-4 ${
               currentSelection
-                ? "right-3 md:right-[calc(1.25rem+390px+0.75rem)]"
+                ? "right-3 md:right-[calc(1.25rem+24.375rem+0.75rem)]"
                 : "right-3"
             }`}
           >
@@ -474,6 +474,7 @@ export default function MapPageContent() {
               searchMessage={searchMessage}
               onQueryChange={setQuery}
               onSearch={handleSearch}
+              detailPanelOpen={Boolean(currentSelection)}
             />
           </div>
 

@@ -3,6 +3,7 @@ import DataTable from "@/components/DataTable";
 import DashboardMetricsGrid from "@/components/DashboardMetricsGrid";
 import AnalyticsLineChart from "@/components/LineChart";
 import AnalyticsPieChart from "@/components/PieChart";
+import LogoutButton from "@/components/LogoutButton";
 import PortalNavigation from "@/components/PortalNavigation";
 import {
   dashboardMetrics,
@@ -18,27 +19,30 @@ export default function CanvasDashboardContent() {
       <div className="mx-auto max-w-[1500px]">
         <section className="relative overflow-hidden rounded-[34px] border border-white/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98)_0%,_rgba(248,250,252,0.98)_100%)] p-6 shadow-[0_35px_90px_-46px_rgba(15,23,42,0.45)] lg:p-8">
           <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,_rgba(14,165,233,0.16),_transparent_34%),radial-gradient(circle_at_top_right,_rgba(34,197,94,0.14),_transparent_36%)]" />
-          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl">
+          <div className="relative flex flex-col gap-5 md:flex-row md:items-start md:justify-between md:gap-6">
+            <div className="min-w-0 max-w-3xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
                 State Command Dashboard
               </p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 lg:text-4xl">
+              <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 sm:mt-3 sm:text-3xl lg:text-4xl">
                 Haryana Forest Analytics Dashboard
               </h1>
-              <p className="mt-3 text-lg font-medium text-slate-600">
+              <p className="mt-2 text-base font-medium text-slate-600 sm:mt-3 sm:text-lg">
                 Forest Settlement Officer, Government of Haryana
               </p>
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-600">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:mt-5">
                 Executive monitoring view for statewide forest settlement, demarcation
                 progress, and district-level survey performance. Built for review meetings,
                 supervisory follow-up, and operational decision-making.
               </p>
             </div>
 
-            <div className="flex flex-col items-start gap-4 lg:items-end">
-              <PortalNavigation variant="dark" />
-              <div className="rounded-[24px] border border-slate-200/80 bg-white/88 px-4 py-4 shadow-[0_22px_50px_-40px_rgba(15,23,42,0.3)]">
+            <div className="flex w-full min-w-0 shrink-0 flex-col items-stretch gap-3 md:w-auto md:max-w-md md:items-end">
+              <div className="flex flex-wrap items-center gap-2 md:justify-end">
+                <PortalNavigation variant="dark" />
+                <LogoutButton layout="dashboard" />
+              </div>
+              <div className="rounded-[24px] border border-slate-200/80 bg-white/88 px-4 py-3 shadow-[0_22px_50px_-40px_rgba(15,23,42,0.3)] sm:py-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
                   Review Focus
                 </p>
@@ -55,7 +59,7 @@ export default function CanvasDashboardContent() {
 
         <DashboardMetricsGrid metrics={dashboardMetrics} />
 
-        <section className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1.05fr_1.3fr]">
+        <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_1.05fr_1.3fr]">
           <AnalyticsPieChart
             data={stateSurveyStatus}
             eyebrow="Survey Status"
@@ -79,7 +83,7 @@ export default function CanvasDashboardContent() {
           />
         </section>
 
-        <section className="mt-6 grid grid-cols-1 gap-4 xl:grid-cols-[1.55fr_0.85fr]">
+        <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.55fr_0.85fr]">
           <DataTable rows={districtBreakdown} />
 
           <div className="rounded-[30px] border border-slate-200/80 bg-white p-5 shadow-[0_24px_60px_-40px_rgba(15,23,42,0.42)]">

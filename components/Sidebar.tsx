@@ -12,6 +12,7 @@ import {
   Trees,
 } from "lucide-react";
 
+import LogoutButton from "@/components/LogoutButton";
 import type { BasemapId, LayerVisibility, SurveyLayerId } from "@/types/gis";
 
 interface SidebarProps {
@@ -110,7 +111,7 @@ export default function Sidebar({
   return (
     <aside
       className={`sticky top-0 flex h-dvh max-h-dvh min-h-0 shrink-0 flex-col border-r border-slate-800 bg-slate-950 px-3 py-3 text-slate-100 transition-all duration-300 md:py-4 ${
-        collapsed ? "w-[92px]" : "w-[320px]"
+        collapsed ? "w-[5.75rem]" : "w-[20rem]"
       }`}
     >
       <div className="mb-4 flex shrink-0 items-center justify-between gap-2 px-2 md:mb-5 md:gap-3 [@media(max-height:700px)]:mb-3">
@@ -244,6 +245,10 @@ export default function Sidebar({
             })}
           </div>
         </div>
+      </div>
+
+      <div className="shrink-0 border-t border-slate-800/90 pt-3">
+        <LogoutButton collapsed={collapsed} layout="sidebar" />
       </div>
     </aside>
   );

@@ -94,7 +94,7 @@ export default function AnalyticsPanel({
       />
 
       <aside
-        className={`pointer-events-none absolute inset-y-2 right-2 z-[830] flex w-[calc(100%-1rem)] max-w-[min(390px,calc(100%-1rem))] justify-end transition-all duration-300 ease-out md:inset-y-4 md:right-4 md:w-[calc(100%-2rem)] md:max-w-[390px] [@media(max-height:760px)]:inset-y-2 [@media(max-height:760px)]:right-2 ${
+        className={`pointer-events-none absolute inset-y-2 right-2 z-[830] flex w-[calc(100%-1rem)] max-w-[min(24.375rem,calc(100%-1rem))] justify-end transition-all duration-300 ease-out md:inset-y-4 md:right-4 md:w-[calc(100%-2rem)] md:max-w-[24.375rem] [@media(max-height:760px)]:inset-y-2 [@media(max-height:760px)]:right-2 ${
           selection
             ? "translate-x-0 opacity-100"
             : "translate-x-[calc(100%+1.5rem)] opacity-0"

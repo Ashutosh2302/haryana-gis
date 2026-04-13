@@ -41,7 +41,7 @@ export default function LoginPageContent() {
 
   return (
     <main
-      className="relative min-h-screen overflow-hidden bg-slate-950 text-white"
+      className="relative min-h-dvh overflow-hidden bg-slate-950 text-white"
       style={{
         backgroundImage:
           "linear-gradient(110deg, rgba(2,6,23,0.88) 0%, rgba(15,23,42,0.82) 36%, rgba(6,78,59,0.7) 100%), url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1800&q=80')",
@@ -51,30 +51,30 @@ export default function LoginPageContent() {
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(148,163,184,0.16),_transparent_32%),radial-gradient(circle_at_bottom_right,_rgba(245,158,11,0.08),_transparent_26%)]" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-[1600px] items-center px-5 py-8 lg:px-10">
-        <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-[1.2fr_520px] lg:gap-14">
-          <section className="flex items-center">
-            <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white/90 backdrop-blur">
-                <Landmark className="h-4.5 w-4.5 text-amber-300" />
+      <div className="relative mx-auto flex min-h-dvh max-w-[min(100rem,100%)] items-center px-4 py-6 md:px-6 md:py-8 lg:px-10">
+        <div className="grid w-full min-w-0 grid-cols-1 gap-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,28.75rem)] md:items-center md:gap-8 lg:gap-12 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,32.5rem)]">
+          <section className="flex min-w-0 items-center">
+            <div className="min-w-0 max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-sm font-medium text-white/90 backdrop-blur sm:gap-3 sm:px-4 sm:py-2">
+                <Landmark className="h-4 w-4 shrink-0 text-amber-300 sm:h-[1.125rem] sm:w-[1.125rem]" />
                 Government of Haryana
               </div>
 
-              <h1 className="mt-8 text-4xl font-semibold tracking-tight text-white md:text-5xl lg:text-[3.75rem] lg:leading-[1.08]">
+              <h1 className="mt-6 text-2xl font-semibold tracking-tight text-white sm:mt-8 sm:text-3xl md:text-4xl lg:text-[3.25rem] lg:leading-[1.1] xl:text-[3.75rem] xl:leading-[1.08]">
                 Haryana Forest Survey & Demarcation GIS Portal
               </h1>
 
-              <p className="mt-5 text-lg font-medium text-emerald-100/95">
+              <p className="mt-4 text-base font-medium text-emerald-100/95 sm:mt-5 sm:text-lg">
                 Forest Settlement Officer, Government of Haryana
               </p>
 
-              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-200">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-200 sm:mt-4 sm:text-base sm:leading-8">
                 Digitizing Forest Boundaries with Precision and Transparency. A
                 secure operational platform for forest settlement monitoring,
                 boundary verification, and executive review.
               </p>
 
-              <div className="mt-8 grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-3">
+              <div className="mt-6 grid max-w-2xl grid-cols-1 gap-3 min-[480px]:grid-cols-3 sm:gap-4 md:mt-8">
                 <div className="rounded-[24px] border border-white/12 bg-white/8 p-4 backdrop-blur-sm">
                   <Trees className="h-5 w-5 text-emerald-300" />
                   <p className="mt-4 text-sm font-semibold text-white">
@@ -108,8 +108,8 @@ export default function LoginPageContent() {
             </div>
           </section>
 
-          <section className="flex items-center justify-center lg:justify-end">
-            <div className="w-full max-w-[460px] rounded-[32px] border border-white/75 bg-white/96 p-6 text-slate-950 shadow-[0_40px_90px_-46px_rgba(15,23,42,0.7)] backdrop-blur md:p-8">
+          <section className="flex items-center justify-center md:justify-end">
+            <div className="w-full max-w-[28.75rem] rounded-[2rem] border border-white/75 bg-white/96 p-5 text-slate-950 shadow-[0_40px_90px_-46px_rgba(15,23,42,0.7)] backdrop-blur sm:p-6 md:max-w-none md:rounded-[32px] md:p-8">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
@@ -135,7 +135,7 @@ export default function LoginPageContent() {
                     Username
                   </span>
                   <div className="flex items-center gap-3 rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3 transition focus-within:border-emerald-300 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.08)]">
-                    <User2 className="h-4.5 w-4.5 text-slate-400" />
+                    <User2 className="h-[1.125rem] w-[1.125rem] shrink-0 text-slate-400" />
                     <input
                       type="text"
                       value={username}
@@ -152,7 +152,7 @@ export default function LoginPageContent() {
                     Password
                   </span>
                   <div className="flex items-center gap-3 rounded-[20px] border border-slate-200 bg-slate-50 px-4 py-3 transition focus-within:border-emerald-300 focus-within:bg-white focus-within:shadow-[0_0_0_4px_rgba(16,185,129,0.08)]">
-                    <Lock className="h-4.5 w-4.5 text-slate-400" />
+                    <Lock className="h-[1.125rem] w-[1.125rem] shrink-0 text-slate-400" />
                     <input
                       type="password"
                       value={password}
