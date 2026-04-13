@@ -1,5 +1,6 @@
 "use client";
 
+import type { FeatureCollection } from "geojson";
 import type { MutableRefObject } from "react";
 import {
   forwardRef,
@@ -63,7 +64,64 @@ export interface MapViewHandle {
   captureScreenshot: () => Promise<{ ok: boolean; message: string }>;
 }
 
-const haryanaCenter: [number, number] = [29.0588, 76.0856];
+/** Default view before fit; matches mock survey data (Morni Hills / Panchkula), not statewide Haryana. */
+const morniSurveyInitialView: { center: [number, number]; zoom: number } = {
+  center: [30.805, 76.91],
+  zoom: 11,
+};
+
+function computeSurveyLayersBounds(): L.LatLngBounds | null {
+  const group = L.featureGroup();
+  const collections: FeatureCollection[] = [
+    forestCollection,
+    pillarsCollection,
+    villagesCollection,
+    villagePillarsCollection,
+  ];
+
+  for (const fc of collections) {
+    const gj = L.geoJSON(fc as GeoJSON.GeoJsonObject);
+    gj.eachLayer((layer) => {
+      group.addLayer(layer);
+    });
+  }
+
+  const bounds = group.getBounds();
+  return bounds.isValid() ? bounds : null;
+}
+
+function InitialSurveyExtent() {
+  const map = useMap();
+  const fittedRef = useRef(false);
+
+  useEffect(() => {
+    if (fittedRef.current) {
+      return;
+    }
+    fittedRef.current = true;
+
+    const bounds = computeSurveyLayersBounds();
+    if (!bounds) {
+      return;
+    }
+
+    const applyFit = () => {
+      map.fitBounds(bounds, {
+        padding: [120, 120],
+        maxZoom: 11,
+        animate: false,
+      });
+    };
+
+    applyFit();
+    requestAnimationFrame(() => {
+      map.invalidateSize();
+      applyFit();
+    });
+  }, [map]);
+
+  return null;
+}
 
 const basemapConfig: Record<
   BasemapId,
@@ -167,7 +225,9 @@ function MapLegend({
   return (
     <div
       className={`absolute bottom-4 left-4 z-[700] rounded-[22px] ${
-        isExpanded ? "w-[min(100vw-2rem,280px)] min-w-[260px] p-2.5" : "w-auto p-2"
+        isExpanded
+          ? "w-[min(100vw-2rem,280px)] min-w-[260px] p-2.5"
+          : "w-auto p-2"
       }`}
       style={{
         border: "1px solid rgba(255,255,255,0.75)",
@@ -870,8 +930,8 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
     <div className="relative h-full w-full overflow-hidden">
       <div ref={captureRef} className="absolute inset-0">
         <MapContainer
-          center={haryanaCenter}
-          zoom={8}
+          center={morniSurveyInitialView.center}
+          zoom={morniSurveyInitialView.zoom}
           zoomControl
           scrollWheelZoom
           className="h-full w-full"
@@ -886,6 +946,7 @@ const MapView = forwardRef<MapViewHandle, MapViewProps>(function MapView(
           />
 
           <ScaleControl position="bottomleft" imperial={false} />
+          <InitialSurveyExtent />
           <FocusController
             forestPillars={pillarsCollection.features}
             villagePillars={villagePillarsCollection.features}
