@@ -109,24 +109,23 @@ export default function Sidebar({
 }: SidebarProps) {
   return (
     <aside
-      className={`sticky top-0 flex h-screen max-h-screen flex-col border-r border-slate-800 bg-slate-950 px-3 py-4 text-slate-100 transition-all duration-300 ${
+      className={`sticky top-0 flex h-dvh max-h-dvh min-h-0 shrink-0 flex-col border-r border-slate-800 bg-slate-950 px-3 py-3 text-slate-100 transition-all duration-300 md:py-4 ${
         collapsed ? "w-[92px]" : "w-[320px]"
       }`}
-      style={{ height: "100vh", maxHeight: "100vh" }}
     >
-      <div className="mb-6 flex items-center justify-between gap-3 px-2">
+      <div className="mb-4 flex shrink-0 items-center justify-between gap-2 px-2 md:mb-5 md:gap-3 [@media(max-height:700px)]:mb-3">
         <div className={`min-w-0 ${collapsed ? "hidden" : "block"}`}>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-emerald-400">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-400 md:text-xs">
             Haryana GIS
           </p>
-          <h2 className="mt-1 text-lg font-semibold text-white">
+          <h2 className="mt-0.5 text-base font-semibold text-white md:mt-1 md:text-lg [@media(max-height:700px)]:text-[0.95rem]">
             Operational Layers
           </h2>
         </div>
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 text-slate-300 transition hover:border-slate-700 hover:bg-slate-800 hover:text-white"
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 text-slate-300 transition hover:border-slate-700 hover:bg-slate-800 hover:text-white md:h-11 md:w-11"
           aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
@@ -137,8 +136,8 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className="space-y-6 overflow-y-auto pb-4">
-        <div className="space-y-3">
+      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-y-contain pb-3 md:space-y-5 md:pb-4 [@media(max-height:700px)]:space-y-3">
+        <div className="space-y-2 md:space-y-3">
           <SectionLabel collapsed={collapsed} title="Basemaps" />
           <div className="space-y-2">
             {basemapOptions.map((option) => {
@@ -150,7 +149,7 @@ export default function Sidebar({
                   key={option.id}
                   type="button"
                   onClick={() => onBasemapChange(option.id)}
-                  className={`group flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+                  className={`group flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
                     active
                       ? "border-emerald-500/40 bg-emerald-500/10 text-white shadow-[inset_0_0_0_1px_rgba(16,185,129,0.15)]"
                       : "border-slate-800 bg-slate-900/80 text-slate-300 hover:border-slate-700 hover:bg-slate-900 hover:text-white"
@@ -158,18 +157,20 @@ export default function Sidebar({
                   title={collapsed ? option.label : undefined}
                 >
                   <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl md:h-11 md:w-11 [@media(max-height:700px)]:h-9 [@media(max-height:700px)]:w-9 ${
                       active
                         ? "bg-emerald-500/15 text-emerald-300"
                         : "bg-slate-800 text-slate-300 group-hover:bg-slate-700"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-[1.15rem] w-[1.15rem] md:h-5 md:w-5" />
                   </div>
                   {!collapsed && (
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{option.label}</p>
-                      <p className="truncate text-sm text-slate-400">
+                      <p className="truncate text-sm font-semibold md:text-base">
+                        {option.label}
+                      </p>
+                      <p className="truncate text-xs text-slate-400 md:text-sm">
                         {option.caption}
                       </p>
                     </div>
@@ -190,7 +191,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-2 md:space-y-3">
           <SectionLabel collapsed={collapsed} title="Survey Layers" />
           <div className="space-y-2">
             {surveyLayers.map((layer) => {
@@ -202,7 +203,7 @@ export default function Sidebar({
                   key={layer.id}
                   type="button"
                   onClick={() => onLayerToggle(layer.id)}
-                  className={`group flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+                  className={`group flex w-full items-center gap-2 rounded-2xl border px-3 py-2.5 text-left transition md:gap-3 md:py-3 [@media(max-height:700px)]:py-2 [@media(max-height:700px)]:px-2.5 ${
                     active
                       ? "border-sky-400/35 bg-sky-400/10 text-white"
                       : "border-slate-800 bg-slate-900/70 text-slate-300 hover:border-slate-700 hover:bg-slate-900 hover:text-white"
@@ -210,18 +211,20 @@ export default function Sidebar({
                   title={collapsed ? layer.label : undefined}
                 >
                   <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl md:h-11 md:w-11 [@media(max-height:700px)]:h-9 [@media(max-height:700px)]:w-9 ${
                       active
                         ? "bg-sky-400/15 text-sky-300"
                         : "bg-slate-800 text-slate-300 group-hover:bg-slate-700"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
+                    <Icon className="h-[1.15rem] w-[1.15rem] md:h-5 md:w-5" />
                   </div>
                   {!collapsed && (
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="truncate font-semibold">{layer.label}</p>
+                      <div className="flex items-center justify-between gap-2 md:gap-3">
+                        <p className="truncate text-sm font-semibold md:text-base">
+                          {layer.label}
+                        </p>
                         <span
                           className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
                             active
@@ -232,7 +235,7 @@ export default function Sidebar({
                           {active ? "Visible" : "Hidden"}
                         </span>
                       </div>
-                      <p className="truncate text-sm text-slate-400">
+                      <p className="truncate text-xs text-slate-400 md:text-sm">
                         {layer.caption}
                       </p>
                     </div>

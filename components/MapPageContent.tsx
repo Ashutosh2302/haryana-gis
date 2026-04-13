@@ -449,7 +449,7 @@ export default function MapPageContent() {
   };
 
   return (
-    <main ref={pageRef} className="flex min-h-screen bg-slate-200">
+    <main ref={pageRef} className="flex min-h-dvh bg-slate-200">
       <Sidebar
         collapsed={sidebarCollapsed}
         basemap={basemap}
@@ -460,10 +460,14 @@ export default function MapPageContent() {
       />
 
       <section className="min-w-0 flex-1 bg-[linear-gradient(180deg,_#eef4fb_0%,_#f8fafc_48%,_#f1f5f9_100%)] p-3 xl:p-4">
-        <div className="relative h-[calc(100vh-1.5rem)] overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)] xl:h-[calc(100vh-2rem)]">
+        <div className="relative h-[calc(100dvh-1.5rem)] min-h-0 overflow-hidden rounded-[32px] border border-white/60 bg-white shadow-[0_30px_90px_-45px_rgba(15,23,42,0.45)] xl:h-[calc(100dvh-2rem)]">
           <div
             data-capture-ignore=""
-            className="pointer-events-none absolute left-20 right-3 top-3 z-[900] flex items-start justify-start gap-2 md:left-24 md:top-4"
+            className={`pointer-events-none absolute left-20 top-3 z-[900] flex items-start justify-start gap-2 md:left-24 md:top-4 ${
+              currentSelection
+                ? "right-3 md:right-[calc(1.25rem+390px+0.75rem)]"
+                : "right-3"
+            }`}
           >
             <Topbar
               query={query}

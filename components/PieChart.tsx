@@ -46,7 +46,7 @@ export default function AnalyticsPieChart({
         </span>
       </div>
 
-      <div className="mt-4 h-[220px]">
+      <div className="mt-3 h-[max(9rem,min(13.75rem,28dvh))] md:mt-4">
         <ResponsiveContainer width="100%" height="100%">
           <RechartsPieChart>
             <Pie

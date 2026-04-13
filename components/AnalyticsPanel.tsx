@@ -94,17 +94,17 @@ export default function AnalyticsPanel({
       />
 
       <aside
-        className={`pointer-events-none absolute inset-y-3 right-3 z-[830] flex w-[calc(100%-1.5rem)] max-w-[390px] justify-end transition-all duration-300 ease-out md:inset-y-5 md:right-5 ${
+        className={`pointer-events-none absolute inset-y-2 right-2 z-[830] flex w-[calc(100%-1rem)] max-w-[min(390px,calc(100%-1rem))] justify-end transition-all duration-300 ease-out md:inset-y-4 md:right-4 md:w-[calc(100%-2rem)] md:max-w-[390px] [@media(max-height:760px)]:inset-y-2 [@media(max-height:760px)]:right-2 ${
           selection
             ? "translate-x-0 opacity-100"
             : "translate-x-[calc(100%+1.5rem)] opacity-0"
         }`}
         aria-hidden={!selection}
       >
-        <div className="pointer-events-auto flex h-full w-full flex-col overflow-hidden rounded-[28px] border border-white/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98)_0%,_rgba(248,250,252,0.98)_100%)] shadow-[0_30px_80px_-46px_rgba(15,23,42,0.46)] backdrop-blur">
+        <div className="pointer-events-auto flex h-full min-h-0 w-full max-h-full flex-col overflow-hidden rounded-[24px] border border-white/80 bg-[linear-gradient(180deg,_rgba(255,255,255,0.98)_0%,_rgba(248,250,252,0.98)_100%)] shadow-[0_30px_80px_-46px_rgba(15,23,42,0.46)] backdrop-blur md:rounded-[28px]">
           {panelData ? (
             <>
-              <div className="relative overflow-hidden border-b border-slate-200/80 px-4 pb-4 pt-4">
+              <div className="relative shrink-0 overflow-hidden border-b border-slate-200/80 px-3 pb-3 pt-3 md:px-4 md:pb-4 md:pt-4 [@media(max-height:760px)]:px-3 [@media(max-height:760px)]:pb-2 [@media(max-height:760px)]:pt-2">
                 <div className="absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_right,_rgba(14,165,233,0.16),_transparent_44%),radial-gradient(circle_at_top_left,_rgba(34,197,94,0.14),_transparent_34%)]" />
                 <div className="relative">
                   <div className="flex items-start justify-between gap-4">
@@ -113,10 +113,10 @@ export default function AnalyticsPanel({
                         <BarChart3 className="h-3.5 w-3.5 shrink-0" />
                         {panelData.entityLabel}
                       </span>
-                      <h2 className="mt-3 text-[1.2rem] font-semibold tracking-tight text-slate-950">
+                      <h2 className="mt-2 text-lg font-semibold tracking-tight text-slate-950 md:mt-3 md:text-[1.2rem] [@media(max-height:760px)]:mt-1.5 [@media(max-height:760px)]:text-base">
                         {panelData.title}
                       </h2>
-                      <p className="mt-1 text-sm font-medium text-slate-600">
+                      <p className="mt-0.5 text-sm font-medium text-slate-600 md:mt-1 [@media(max-height:760px)]:text-xs">
                         {panelData.subtitle}
                       </p>
                       <div className="mt-2 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
@@ -136,17 +136,17 @@ export default function AnalyticsPanel({
                     </button>
                   </div>
 
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                  <p className="mt-2 text-sm leading-6 text-slate-600 md:mt-3 [@media(max-height:760px)]:mt-1.5 [@media(max-height:760px)]:text-xs [@media(max-height:760px)]:leading-5">
                     {panelData.description}
                   </p>
 
-                  <div className="mt-4 rounded-[22px] border border-slate-200/80 bg-white/88 p-3.5 shadow-[0_18px_40px_-40px_rgba(15,23,42,0.35)]">
+                  <div className="mt-3 rounded-[22px] border border-slate-200/80 bg-white/88 p-3 shadow-[0_18px_40px_-40px_rgba(15,23,42,0.35)] md:mt-4 md:p-3.5 [@media(max-height:760px)]:mt-2 [@media(max-height:760px)]:p-2.5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
                           Survey Completion
                         </p>
-                        <p className="mt-1.5 text-[1.6rem] font-semibold tracking-tight text-slate-950">
+                        <p className="mt-1 text-[1.35rem] font-semibold tracking-tight text-slate-950 md:mt-1.5 md:text-[1.6rem] [@media(max-height:760px)]:text-xl">
                           {panelData.completionRate}%
                         </p>
                       </div>
@@ -164,7 +164,7 @@ export default function AnalyticsPanel({
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-4 pb-4 pt-4">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 pb-3 pt-3 md:px-4 md:pb-4 md:pt-4 [@media(max-height:760px)]:px-3 [@media(max-height:760px)]:pb-2 [@media(max-height:760px)]:pt-2">
                 <section className="rounded-[22px] border border-slate-200/80 bg-white p-3 shadow-[0_20px_44px_-42px_rgba(15,23,42,0.38)]">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-slate-100 text-slate-600">
@@ -186,10 +186,10 @@ export default function AnalyticsPanel({
                         alt={imageSection.title}
                         width={640}
                         height={360}
-                        className="h-36 w-full object-cover"
+                        className="h-28 w-full object-cover md:h-36 [@media(max-height:760px)]:h-24"
                       />
                     ) : (
-                      <div className="flex h-36 w-full items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#e2e8f0_100%)]">
+                      <div className="flex h-28 w-full items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#e2e8f0_100%)] md:h-36 [@media(max-height:760px)]:h-24">
                         <div className="text-center">
                           <Camera className="mx-auto h-7 w-7 text-slate-400" />
                           <p className="mt-2 text-sm font-medium text-slate-600">
@@ -204,7 +204,7 @@ export default function AnalyticsPanel({
                   </p> */}
                 </section>
 
-                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 md:mt-4 md:gap-3 [@media(max-height:760px)]:gap-2">
                   {panelData.metrics.map((metric, index) => {
                     const Icon = metricIcons[index];
 
