@@ -8,5 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  redirect("/");
+  // redirect("/");
+  redirect("/canvas");
 }

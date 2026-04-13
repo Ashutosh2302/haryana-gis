@@ -12,7 +12,7 @@ import {
   Trees,
 } from "lucide-react";
 
-import LogoutButton from "@/components/LogoutButton";
+// import LogoutButton from "@/components/LogoutButton";
 import type { BasemapId, LayerVisibility, SurveyLayerId } from "@/types/gis";
 
 interface SidebarProps {
@@ -247,9 +247,9 @@ export default function Sidebar({
         </div>
       </div>
 
-      <div className="shrink-0 border-t border-slate-800/90 pt-3">
+      {/* <div className="shrink-0 border-t border-slate-800/90 pt-3">
         <LogoutButton collapsed={collapsed} layout="sidebar" />
-      </div>
+      </div> */}
     </aside>
   );
 }

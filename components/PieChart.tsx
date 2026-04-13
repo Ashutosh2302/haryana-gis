@@ -31,8 +31,8 @@ export default function AnalyticsPieChart({
   const total = data.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="rounded-[26px] border border-slate-200/80 bg-white p-4 shadow-[0_22px_60px_-42px_rgba(15,23,42,0.42)]">
-      <div className="flex items-start justify-between gap-3">
+    <div className="flex h-full min-h-0 flex-col rounded-[26px] border border-slate-200/80 bg-white p-4 shadow-[0_22px_60px_-42px_rgba(15,23,42,0.42)]">
+      <div className="flex shrink-0 items-start justify-between gap-3">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
             {eyebrow}
@@ -46,15 +46,15 @@ export default function AnalyticsPieChart({
         </span>
       </div>
 
-      <div className="mt-3 h-[max(9rem,min(13.75rem,28dvh))] md:mt-4">
+      <div className="mt-3 flex min-h-[14rem] flex-1 flex-col md:mt-4 lg:min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <RechartsPieChart>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={62}
-              outerRadius={84}
+              innerRadius="48%"
+              outerRadius="72%"
               paddingAngle={3}
               stroke="#ffffff"
               strokeWidth={4}
@@ -108,7 +108,7 @@ export default function AnalyticsPieChart({
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-2 grid grid-cols-1 gap-2 min-[480px]:grid-cols-3">
+      <div className="mt-2 grid shrink-0 grid-cols-1 gap-2 min-[480px]:grid-cols-3">
         {data.map((item) => {
           const share = total ? Math.round((item.value / total) * 100) : 0;
 

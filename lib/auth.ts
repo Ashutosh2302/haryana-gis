@@ -11,9 +11,9 @@ export async function hasPortalSession() {
 }
 
 export async function requirePortalAuth() {
-  if (!(await hasPortalSession())) {
-    redirect("/");
-  }
+  // if (!(await hasPortalSession())) {
+  //   redirect("/");
+  // }
 }
 
 export async function redirectAuthenticatedUser() {

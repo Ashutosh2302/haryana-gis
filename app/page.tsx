@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import LoginPageContent from "@/components/LoginPageContent";
-import { redirectAuthenticatedUser } from "@/lib/auth";
+// import LoginPageContent from "@/components/LoginPageContent";
+// import { redirectAuthenticatedUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "Haryana GIS Secure Login",
+  title: "Haryana Forest Analytics Canvas",
   description:
-    "Secure login for the Haryana Forest Survey & Demarcation GIS Portal.",
+    "Executive canvas dashboard for Haryana forest survey and demarcation monitoring.",
 };
 
 export default async function Home() {
-  await redirectAuthenticatedUser();
-
-  return <LoginPageContent />;
+  // await redirectAuthenticatedUser();
+  // return <LoginPageContent />;
+  redirect("/canvas");
 }

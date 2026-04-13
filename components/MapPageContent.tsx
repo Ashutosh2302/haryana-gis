@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toBlob as domToBlob } from "html-to-image";
 import { jsPDF } from "jspdf";
-import { Camera, Loader2 } from "lucide-react";
+// import { Camera, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 
 import CaptureModal from "@/components/CaptureModal";
@@ -239,7 +239,7 @@ export default function MapPageContent() {
   const [basemap, setBasemap] = useState<"street" | "satellite">("street");
   const [layers, setLayers] = useState<LayerVisibility>(defaultLayers);
   const [query, setQuery] = useState("");
-  const [capturing, setCapturing] = useState(false);
+  const [, setCapturing] = useState(false);
   const [expandLegendForCapture, setExpandLegendForCapture] = useState(false);
   const [showCaptureModal, setShowCaptureModal] = useState(false);
   const [currentSelection, setCurrentSelection] = useState<MapSelection | null>(
@@ -488,7 +488,7 @@ export default function MapPageContent() {
           />
 
           {/* After MapView; sits in Leaflet top-left column under zoom (draw tools removed). */}
-          <button
+          {/* <button
             type="button"
             data-capture-ignore=""
             onClick={() => setShowCaptureModal(true)}
@@ -506,7 +506,7 @@ export default function MapPageContent() {
             ) : (
               <Camera className="h-[18px] w-[18px] shrink-0" aria-hidden />
             )}
-          </button>
+          </button> */}
         </div>
       </section>
 

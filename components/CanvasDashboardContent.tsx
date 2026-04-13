@@ -1,12 +1,12 @@
 import AnalyticsBarChart from "@/components/BarChart";
 import DataTable from "@/components/DataTable";
-import DashboardMetricsGrid from "@/components/DashboardMetricsGrid";
+// import DashboardMetricsGrid from "@/components/DashboardMetricsGrid";
 import AnalyticsLineChart from "@/components/LineChart";
 import AnalyticsPieChart from "@/components/PieChart";
-import LogoutButton from "@/components/LogoutButton";
+// import LogoutButton from "@/components/LogoutButton";
 import PortalNavigation from "@/components/PortalNavigation";
 import {
-  dashboardMetrics,
+  // dashboardMetrics,
   districtBreakdown,
   pillarsByDistrict,
   surveyProgressTimeline,
@@ -40,7 +40,7 @@ export default function CanvasDashboardContent() {
             <div className="flex w-full min-w-0 shrink-0 flex-col items-stretch gap-3 md:w-auto md:max-w-md md:items-end">
               <div className="flex flex-wrap items-center gap-2 md:justify-end">
                 <PortalNavigation variant="dark" />
-                <LogoutButton layout="dashboard" />
+                {/* <LogoutButton layout="dashboard" /> */}
               </div>
               <div className="rounded-[24px] border border-slate-200/80 bg-white/88 px-4 py-3 shadow-[0_22px_50px_-40px_rgba(15,23,42,0.3)] sm:py-4">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
@@ -57,9 +57,9 @@ export default function CanvasDashboardContent() {
           </div>
         </section>
 
-        <DashboardMetricsGrid metrics={dashboardMetrics} />
+        {/* <DashboardMetricsGrid metrics={dashboardMetrics} /> */}
 
-        <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[1.05fr_1.05fr_1.3fr]">
+        <section className="mt-6 grid min-h-0 grid-cols-1 gap-4 lg:min-h-[28rem] lg:grid-cols-[1.05fr_1.05fr_1.3fr] lg:items-stretch">
           <AnalyticsPieChart
             data={stateSurveyStatus}
             eyebrow="Survey Status"
